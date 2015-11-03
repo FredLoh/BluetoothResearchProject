@@ -1,0 +1,6 @@
+framework module Pods_Bluetooth_Interaction {
+  umbrella header "Pods-Bluetooth-Interaction-umbrella.h"
+
+  export *
+  module * { export * }
+}
