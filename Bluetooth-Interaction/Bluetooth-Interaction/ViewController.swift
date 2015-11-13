@@ -8,118 +8,164 @@
 
 import UIKit
 import CoreBluetooth
+import SnapKit
 
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
-    var titleLabel: UILabel!
-    var statusLabel: UILabel!
-    var tempLabel: UILabel!
+    let backgroundView = UIView()
+    let scanButton =  UIButton()
+    let sendButton = UIButton()
+    
     // BLE
     var centralManager: CBCentralManager!
-    var sensorTagPeripheral: CBPeripheral!
-    // IR Temp UUIDs
-    let IRTemperatureServiceUUID = CBUUID(string: "F000AA00-0451-4000-B000-000000000000")
-    let IRTemperatureDataUUID   = CBUUID(string: "F000AA01-0451-4000-B000-000000000000")
-    let IRTemperatureConfigUUID = CBUUID(string: "F000AA02-0451-4000-B000-000000000000")
-    
+    var peripheral: CBPeripheral!
+    //    var characteristics: CBCharacteristic!
+    var terminalChar:CBCharacteristic!
+    var bluetoothAvailable = false
     
     override func viewDidLoad() {
-        // Set up title label
-        titleLabel = UILabel()
-        titleLabel.text = "My SensorTag"
-        titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
-        titleLabel.sizeToFit()
-        titleLabel.center = CGPoint(x: self.view.frame.midX, y: self.titleLabel.bounds.midY+28)
-        self.view.addSubview(titleLabel)
+        scanButton.setTitle("Scan", forState: UIControlState.Normal)
+        scanButton.addTarget(self, action: "startScanning", forControlEvents: UIControlEvents.TouchUpInside)
+        scanButton.backgroundColor = UIColor.blackColor()
         
-        // Set up status label
-        statusLabel = UILabel()
-        statusLabel.textAlignment = NSTextAlignment.Center
-        statusLabel.text = "Loading..."
-        statusLabel.font = UIFont(name: "HelveticaNeue-Light", size: 12)
-        statusLabel.sizeToFit()
-        statusLabel.frame = CGRect(x: self.view.frame.origin.x, y: self.titleLabel.frame.maxY, width: self.view.frame.width, height: self.statusLabel.bounds.height)
-        self.view.addSubview(statusLabel)
+        sendButton.setTitle("Send", forState: UIControlState.Normal)
+        sendButton.addTarget(self, action: "sendMessage", forControlEvents: UIControlEvents.TouchUpInside)
+        sendButton.backgroundColor = UIColor.blackColor()
         
-        // Set up temperature label
-        tempLabel = UILabel()
-        tempLabel.text = "00.00"
-        tempLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 72)
-        tempLabel.sizeToFit()
-        tempLabel.center = self.view.center
-        self.view.addSubview(tempLabel)
+        backgroundView.addSubview(scanButton)
+        backgroundView.addSubview(sendButton)
+        self.view.addSubview(backgroundView)
         
-        // Initialize central manager on load
-        centralManager = CBCentralManager(delegate: self, queue: nil)
-        
-    }
-    
-    // Check status of BLE hardware
-    func centralManagerDidUpdateState(central: CBCentralManager) {
-        if central.state == CBCentralManagerState.PoweredOn {
-            // Scan for peripherals if BLE is turned on
-            central.scanForPeripheralsWithServices(nil, options: nil)
-            self.statusLabel.text = "Searching for BLE Devices"
-        } else if central.state == CBCentralManagerState.Resetting {
-            print("RESETTING")
-        } else if central.state == CBCentralManagerState.Unauthorized {
-            print("Not Authorized")
-        } else {
-            // Can have different conditions for all states if needed - print generic message for now
-            print("Bluetooth switched off or not initialized")
+        backgroundView.snp_makeConstraints { (make) -> Void in
+            make.left.right.top.bottom.equalTo(self.view)
+        }
+        scanButton.snp_makeConstraints { (make) -> Void in
+            make.left.bottom.equalTo(backgroundView)
+            make.width.height.equalTo(60)
+        }
+        sendButton.snp_makeConstraints { (make) -> Void in
+            make.right.bottom.equalTo(backgroundView)
+            make.width.height.equalTo(60)
         }
     }
     
+    func startScanning() {
+        print("Started Scanning!")
+        //Could add service UUID here to scan for only relevant services
+        centralManager = CBCentralManager(delegate: self, queue: nil)
+    }
+    
+    func sendMessage() {
+        let message = "5"
+        let data = message.dataUsingEncoding(NSUTF8StringEncoding)
+        if terminalChar != nil {
+            peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+        }
+    }
+    
+    func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+        print("Value was sent")
+    }
+    
+    func discoverDevices() {
+        print("discovering devices")
+        centralManager.scanForPeripheralsWithServices(nil, options: nil)
+    }
+    
+    func centralManagerDidUpdateState(central: CBCentralManager) {
+        print("Checking state")
+        switch (central.state) {
+        case .PoweredOff:
+            print("CoreBluetooth BLE hardware is powered off")
+            
+        case .PoweredOn:
+            print("CoreBluetooth BLE hardware is powered on and ready")
+            bluetoothAvailable = true;
+            
+        case .Resetting:
+            print("CoreBluetooth BLE hardware is resetting")
+            
+        case .Unauthorized:
+            print("CoreBluetooth BLE state is unauthorized")
+            
+        case .Unknown:
+            print("CoreBluetooth BLE state is unknown");
+            
+        case .Unsupported:
+            print("CoreBluetooth BLE hardware is unsupported on this platform");
+            
+        }
+        if bluetoothAvailable == true {
+            discoverDevices()
+        }
+    }
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
-        let deviceName = "FredLohMac"
-        print(peripheral.name)
+        //        print(peripheral)
+        let deviceName = "Bluno"
         if let nameOfDeviceFound = peripheral.name {
-            
-            print(nameOfDeviceFound)
-            
-            print(advertisementData["CBAdvertisementDataLocalNameKey"])
             if (nameOfDeviceFound == deviceName) {
-
-                // Update Status Label
-                self.statusLabel.text = "Sensor Tag Found"
+                print("Discovered \(deviceName)")
+                print("")
                 
+                print(peripheral)
                 // Stop scanning
                 self.centralManager.stopScan()
+                print("Stopped Scanning")
                 // Set as the peripheral to use and establish connection
-                self.sensorTagPeripheral = peripheral
-                self.sensorTagPeripheral.delegate = self
+                self.peripheral = peripheral
+                self.peripheral.delegate = self
                 self.centralManager.connectPeripheral(peripheral, options: nil)
             }
             else {
-                self.statusLabel.text = "Sensor Tag NOT Found"
+                print("NOPE.EXE")
             }
-        }
-    }
-    // Check if the service discovered is a valid IR Temperature Service
-    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
-        self.statusLabel.text = "Looking at peripheral services"
-        for service in peripheral.services! {
-            let thisService = service as CBService
-            if service.UUID == IRTemperatureServiceUUID {
-                // Discover characteristics of IR Temperature Service
-                peripheral.discoverCharacteristics(nil, forService: thisService)
-            }
-            // Uncomment to print list of UUIDs
-            print(thisService.UUID)
-
         }
     }
     
     func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
-        print("Connected")
-        self.statusLabel.text = "Discovering peripheral services"
-        peripheral.discoverServices(nil)
+        print("Did connect to peripheral.")
+        print("")
+        peripheral.delegate = self
+        peripheral.discoverServices([CBUUID(string: "DFB0")])
+        let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
+        print("Connected:\(state)")
         
     }
-    func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-        print("CONNECTION FAILED")
+    
+    //    // Check if the service discovered is a valid IR Temperature Service
+    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+        if(error != nil) {
+            print(error?.description)
+        }
+        
+        for svc in peripheral.services! {
+            print("Service \(svc)\n")
+            print("Discovering Characteristics for Service : \(svc)")
+            peripheral.discoverCharacteristics([CBUUID(string: "DFB1")], forService: svc as CBService)
+        }
     }
+    
+    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+        if(error != nil) {
+            print(error?.description)
+        }
+        for characteristic in service.characteristics! {
+            if characteristic.UUID == CBUUID(string: "DFB1") {
+                self.terminalChar = (characteristic as CBCharacteristic)
+                peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                
+                // Send notification that Bluetooth is connected and all required characteristics are discovered
+                print("Found characteristic we were looking for!")
+                print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
+                
+            }
+        }
+    }
+    
+    func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+        print("Failed to connect to peripheral.")
+    }
+    
     func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
         print("CONNECTION WAS DISCONNECTED")
     }
-    
 }
