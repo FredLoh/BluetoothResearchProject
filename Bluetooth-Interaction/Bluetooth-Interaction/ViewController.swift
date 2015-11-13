@@ -12,8 +12,11 @@ import SnapKit
 
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
     let backgroundView = UIView()
+    let greenRedView = UIView()
     let scanButton =  UIButton()
     let sendButton = UIButton()
+    let messageField = UITextField()
+    let messageLabel = UILabel()
     
     // BLE
     var centralManager: CBCentralManager!
@@ -31,9 +34,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         sendButton.addTarget(self, action: "sendMessage", forControlEvents: UIControlEvents.TouchUpInside)
         sendButton.backgroundColor = UIColor.blackColor()
         
+        messageField.textAlignment = .Center
+        messageField.autocorrectionType = UITextAutocorrectionType.No
+        messageField.borderStyle = .RoundedRect
+        
+        messageLabel.text = "Message to send"
+        greenRedView.backgroundColor = UIColor.redColor()
+        
+        self.view.addSubview(backgroundView)
         backgroundView.addSubview(scanButton)
         backgroundView.addSubview(sendButton)
-        self.view.addSubview(backgroundView)
+        backgroundView.addSubview(messageField)
+        backgroundView.addSubview(messageLabel)
+        backgroundView.addSubview(greenRedView)
+        
         
         backgroundView.snp_makeConstraints { (make) -> Void in
             make.left.right.top.bottom.equalTo(self.view)
@@ -43,8 +57,23 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             make.width.height.equalTo(60)
         }
         sendButton.snp_makeConstraints { (make) -> Void in
-            make.right.bottom.equalTo(backgroundView)
+            make.top.equalTo(messageField.snp_bottom)
+            make.centerX.equalTo(messageField)
             make.width.height.equalTo(60)
+        }
+        messageField.snp_makeConstraints { (make) -> Void in
+            make.center.equalTo(backgroundView)
+            make.width.equalTo(200)
+            make.height.equalTo(50)
+        }
+        messageLabel.snp_makeConstraints { (make) -> Void in
+            make.bottom.equalTo(messageField.snp_top)
+            make.centerX.equalTo(messageField)
+        }
+        greenRedView.snp_makeConstraints { (make) -> Void in
+            make.height.width.equalTo(20)
+            make.bottom.equalTo(messageLabel.snp_top).offset(-20)
+            make.centerX.equalTo(messageField)
         }
     }
     
@@ -55,10 +84,11 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func sendMessage() {
-        let message = "5"
-        let data = message.dataUsingEncoding(NSUTF8StringEncoding)
-        if terminalChar != nil {
-            peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+        if let message = messageField.text {
+            let data = message.dataUsingEncoding(NSUTF8StringEncoding)
+            if terminalChar != nil {
+                peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+            }
         }
     }
     
@@ -67,7 +97,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func discoverDevices() {
-        print("discovering devices")
+        print("Searching for devices")
         centralManager.scanForPeripheralsWithServices(nil, options: nil)
     }
     
@@ -116,7 +146,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 self.centralManager.connectPeripheral(peripheral, options: nil)
             }
             else {
-                print("NOPE.EXE")
+                print("Discovered non \(deviceName) device.")
             }
         }
     }
@@ -128,6 +158,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         peripheral.discoverServices([CBUUID(string: "DFB0")])
         let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
         print("Connected:\(state)")
+        greenRedView.backgroundColor = UIColor.greenColor()
         
     }
     
@@ -156,7 +187,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 // Send notification that Bluetooth is connected and all required characteristics are discovered
                 print("Found characteristic we were looking for!")
                 print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
-                
             }
         }
     }
@@ -167,5 +197,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
         print("CONNECTION WAS DISCONNECTED")
+        greenRedView.backgroundColor = UIColor.redColor()
+        startScanning()
     }
 }
