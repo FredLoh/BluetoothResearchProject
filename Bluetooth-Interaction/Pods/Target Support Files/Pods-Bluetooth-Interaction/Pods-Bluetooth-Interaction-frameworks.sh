@@ -84,10 +84,12 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "Pods-Bluetooth-Interaction/Charts.framework"
   install_framework "Pods-Bluetooth-Interaction/CryptoSwift.framework"
   install_framework "Pods-Bluetooth-Interaction/SnapKit.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "Pods-Bluetooth-Interaction/Charts.framework"
   install_framework "Pods-Bluetooth-Interaction/CryptoSwift.framework"
   install_framework "Pods-Bluetooth-Interaction/SnapKit.framework"
 fi

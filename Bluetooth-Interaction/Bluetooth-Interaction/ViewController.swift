@@ -9,6 +9,7 @@
 import UIKit
 import CoreBluetooth
 import SnapKit
+import Charts
 
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
     let backgroundView = UIView()
@@ -17,6 +18,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     let sendButton = UIButton()
     let messageField = UITextField()
     let messageLabel = UILabel()
+    let chartView = LineChartView()
+    var months: [String]!
+    var unitsSold: [Double]!
     
     // BLE
     var centralManager: CBCentralManager!
@@ -25,7 +29,51 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     var terminalChar:CBCharacteristic!
     var bluetoothAvailable = false
     
+    func setChart(dataPoints: [String], values: [Double]) {
+        chartView.noDataText = "You need to provide data for the chart."
+        chartView.descriptionText = ""
+        
+        var dataEntries: [BarChartDataEntry] = []
+        
+        for i in 0..<dataPoints.count {
+            let dataEntry = BarChartDataEntry(value: values[i], xIndex: i)
+            dataEntries.append(dataEntry)
+        }
+        
+        let chartDataSet = LineChartDataSet(yVals: dataEntries, label: "Test Data")
+        let chartData = LineChartData(xVals: months, dataSet: chartDataSet)
+        chartView.data = chartData
+//        chartDataSet.colors = ChartColorTemplates.joyful()
+        chartView.xAxis.labelPosition = .Bottom
+        chartView.notifyDataSetChanged()
+        
+    }
+    
+    func changeChart() {
+        print("Changing Chart")
+        print(months)
+        months.append("Test")
+        months.append("Test2")
+        unitsSold.append(2.0)
+        unitsSold.append(3.0)
+        setChart(months, values: unitsSold)
+        chartView.notifyDataSetChanged()
+    }
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
+    
+    
     override func viewDidLoad() {
+        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        self.view.addGestureRecognizer(tap)
+        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        unitsSold = [1.0, 4.0, 6.0, 3.0, 5.0, 8.0, 4.0, 8.0, 2.0, 4.0, 5.0, 4.0]
+        
+        setChart(months, values: unitsSold)
+        
         scanButton.setTitle("Scan", forState: UIControlState.Normal)
         scanButton.addTarget(self, action: "startScanning", forControlEvents: UIControlEvents.TouchUpInside)
         scanButton.backgroundColor = UIColor.blackColor()
@@ -41,19 +89,27 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         messageLabel.text = "Message to send"
         greenRedView.backgroundColor = UIColor.redColor()
         
+        
+        
+        
         self.view.addSubview(backgroundView)
+
+        
         backgroundView.addSubview(scanButton)
         backgroundView.addSubview(sendButton)
         backgroundView.addSubview(messageField)
         backgroundView.addSubview(messageLabel)
         backgroundView.addSubview(greenRedView)
+        backgroundView.addSubview(chartView)
         
         
         backgroundView.snp_makeConstraints { (make) -> Void in
-            make.left.right.top.bottom.equalTo(self.view)
+            make.top.left.right.bottom.equalTo(self.view)
+            make.centerX.equalTo(self.view)
         }
         scanButton.snp_makeConstraints { (make) -> Void in
-            make.left.bottom.equalTo(backgroundView)
+            make.right.equalTo(sendButton.snp_left).offset(-10)
+            make.bottom.equalTo(sendButton)
             make.width.height.equalTo(60)
         }
         sendButton.snp_makeConstraints { (make) -> Void in
@@ -62,7 +118,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             make.width.height.equalTo(60)
         }
         messageField.snp_makeConstraints { (make) -> Void in
-            make.center.equalTo(backgroundView)
+            make.centerX.equalTo(backgroundView)
+            make.centerY.equalTo(backgroundView).offset(50)
             make.width.equalTo(200)
             make.height.equalTo(50)
         }
@@ -74,6 +131,13 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             make.height.width.equalTo(20)
             make.bottom.equalTo(messageLabel.snp_top).offset(-20)
             make.centerX.equalTo(messageField)
+        }
+        chartView.snp_makeConstraints { (make) -> Void in
+            make.left.right.equalTo(backgroundView)
+            make.centerX.equalTo(backgroundView)
+            make.top.equalTo(backgroundView).offset(50)
+//            make.bottom.equalTo(greenRedView.snp_top).offset(-10)
+            make.height.equalTo(200)
         }
     }
     
@@ -131,15 +195,16 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         //        print(peripheral)
         let deviceName = "Bluno"
+        let deviceName2 = "FredLohMac"
         if let nameOfDeviceFound = peripheral.name {
-            if (nameOfDeviceFound == deviceName) {
-                print("Discovered \(deviceName)")
+            if (nameOfDeviceFound == deviceName || nameOfDeviceFound == deviceName2) {
+                print("Discovered \(nameOfDeviceFound)")
                 print("")
                 
                 print(peripheral)
                 // Stop scanning
-                self.centralManager.stopScan()
-                print("Stopped Scanning")
+//                self.centralManager.stopScan()
+//                print("Stopped Scanning")
                 // Set as the peripheral to use and establish connection
                 self.peripheral = peripheral
                 self.peripheral.delegate = self

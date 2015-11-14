@@ -1,8 +1,10 @@
 PODS:
+  - Charts (2.1.6)
   - CryptoSwift (0.1.1)
   - SnapKit (0.15.0)
 
 DEPENDENCIES:
+  - Charts
   - CryptoSwift (from `https://github.com/krzyzanowskim/CryptoSwift`, branch `master`)
   - SnapKit (~> 0.15.0)
 
@@ -13,10 +15,11 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   CryptoSwift:
-    :commit: 2915a3dc8c238269a72a0eea52d72cee5c192a34
+    :commit: f23720f6b398169d7407ca8b2c4a590238128686
     :git: https://github.com/krzyzanowskim/CryptoSwift
 
 SPEC CHECKSUMS:
+  Charts: 5e1e5ac23898e5b09d226a2fc3e9d86bc281937e
   CryptoSwift: 80b014431f6ef249acb6004efc93a8f65f5f7781
   SnapKit: 4962eed2ee18e48cbd2b2292fffc57efe7235f87
 
