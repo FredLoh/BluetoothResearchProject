@@ -11,9 +11,15 @@ import CoreBluetooth
 import SnapKit
 import Charts
 
+struct bothConnected {
+    var firstOne = false
+    var secondOne = false
+}
+
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
     let backgroundView = UIView()
-    let greenRedView = UIView()
+    let greenRedView1 = UIView()
+    let greenRedView2 = UIView()
     let scanButton =  UIButton()
     let sendButton = UIButton()
     let messageField = UITextField()
@@ -21,12 +27,19 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     let chartView = LineChartView()
     var months: [String]!
     var unitsSold: [Double]!
+    var bothAreConnected = bothConnected()
+    
+    let deviceName = NSUUID(UUIDString: "350EA7E4-E6C1-0BDA-FCB9-8478AFA347FD")
+    let deviceName2 = NSUUID(UUIDString: "64D3E7BE-B480-82E7-5B2B-E8B8DDE0B52D")
     
     // BLE
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
+    var peripheral2: CBPeripheral!
     //    var characteristics: CBCharacteristic!
     var terminalChar:CBCharacteristic!
+    var terminalChar2:CBCharacteristic!
+    
     var bluetoothAvailable = false
     
     func setChart(dataPoints: [String], values: [Double]) {
@@ -43,7 +56,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         let chartDataSet = LineChartDataSet(yVals: dataEntries, label: "Test Data")
         let chartData = LineChartData(xVals: months, dataSet: chartDataSet)
         chartView.data = chartData
-//        chartDataSet.colors = ChartColorTemplates.joyful()
+        //        chartDataSet.colors = ChartColorTemplates.joyful()
         chartView.xAxis.labelPosition = .Bottom
         chartView.notifyDataSetChanged()
         
@@ -87,19 +100,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         messageField.borderStyle = .RoundedRect
         
         messageLabel.text = "Message to send"
-        greenRedView.backgroundColor = UIColor.redColor()
-        
+        greenRedView1.backgroundColor = UIColor.redColor()
+        greenRedView2.backgroundColor = UIColor.redColor()
         
         
         
         self.view.addSubview(backgroundView)
-
+        
         
         backgroundView.addSubview(scanButton)
         backgroundView.addSubview(sendButton)
         backgroundView.addSubview(messageField)
         backgroundView.addSubview(messageLabel)
-        backgroundView.addSubview(greenRedView)
+        backgroundView.addSubview(greenRedView1)
+        backgroundView.addSubview(greenRedView2)
         backgroundView.addSubview(chartView)
         
         
@@ -127,16 +141,21 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             make.bottom.equalTo(messageField.snp_top)
             make.centerX.equalTo(messageField)
         }
-        greenRedView.snp_makeConstraints { (make) -> Void in
+        greenRedView1.snp_makeConstraints { (make) -> Void in
             make.height.width.equalTo(20)
             make.bottom.equalTo(messageLabel.snp_top).offset(-20)
             make.centerX.equalTo(messageField)
+        }
+        greenRedView2.snp_makeConstraints { (make) -> Void in
+            make.height.width.equalTo(20)
+            make.bottom.equalTo(messageLabel.snp_top).offset(-20)
+            make.left.equalTo(greenRedView1.snp_right).offset(10)
         }
         chartView.snp_makeConstraints { (make) -> Void in
             make.left.right.equalTo(backgroundView)
             make.centerX.equalTo(backgroundView)
             make.top.equalTo(backgroundView).offset(50)
-//            make.bottom.equalTo(greenRedView.snp_top).offset(-10)
+            //            make.bottom.equalTo(greenRedView.snp_top).offset(-10)
             make.height.equalTo(200)
         }
     }
@@ -149,9 +168,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func sendMessage() {
         if let message = messageField.text {
+            let message2 = "a"
             let data = message.dataUsingEncoding(NSUTF8StringEncoding)
-            if terminalChar != nil {
+            let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
+            if terminalChar != nil && terminalChar2 != nil {
                 peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+                peripheral2!.writeValue(data2!, forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
             }
         }
     }
@@ -194,24 +216,41 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         //        print(peripheral)
-        let deviceName = "Bluno"
-        let deviceName2 = "FredLohMac"
-        if let nameOfDeviceFound = peripheral.name {
-            if (nameOfDeviceFound == deviceName || nameOfDeviceFound == deviceName2) {
+        if let nameOfDeviceFound: NSUUID = peripheral.identifier {
+            if (nameOfDeviceFound == deviceName) {
+                print("Discovered \(nameOfDeviceFound)")
+                print("")
+                
+                print(peripheral)
+                
+                self.peripheral = peripheral
+                self.peripheral.delegate = self
+                self.centralManager.connectPeripheral(peripheral, options: nil)
+                bothAreConnected.firstOne = true
+                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true) {
+                    self.centralManager.stopScan()
+                }
+            } else if (nameOfDeviceFound == deviceName2) {
                 print("Discovered \(nameOfDeviceFound)")
                 print("")
                 
                 print(peripheral)
                 // Stop scanning
-//                self.centralManager.stopScan()
-//                print("Stopped Scanning")
+                //                self.centralManager.stopScan()
+                //                print("Stopped Scanning")
                 // Set as the peripheral to use and establish connection
-                self.peripheral = peripheral
-                self.peripheral.delegate = self
+                self.peripheral2 = peripheral
+                self.peripheral2.delegate = self
                 self.centralManager.connectPeripheral(peripheral, options: nil)
+                bothAreConnected.secondOne = true
+                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true) {
+                    print("Stopped Scanning")
+                    self.centralManager.stopScan()
+                }
+                
             }
             else {
-                print("Discovered non \(deviceName) device.")
+                //                print("Discovered non \(deviceName) device.")
             }
         }
     }
@@ -223,8 +262,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         peripheral.discoverServices([CBUUID(string: "DFB0")])
         let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
         print("Connected:\(state)")
-        greenRedView.backgroundColor = UIColor.greenColor()
-        
     }
     
     //    // Check if the service discovered is a valid IR Temperature Service
@@ -246,12 +283,25 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
         for characteristic in service.characteristics! {
             if characteristic.UUID == CBUUID(string: "DFB1") {
-                self.terminalChar = (characteristic as CBCharacteristic)
-                peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
-                
-                // Send notification that Bluetooth is connected and all required characteristics are discovered
-                print("Found characteristic we were looking for!")
-                print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
+                if peripheral.identifier == deviceName {
+                    self.terminalChar = (characteristic as CBCharacteristic)
+                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                    
+                    // Send notification that Bluetooth is connected and all required characteristics are discovered
+                    print("Found characteristic we were looking for!")
+                    print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
+                } else if peripheral.identifier == deviceName2 {
+                    self.terminalChar2 = (characteristic as CBCharacteristic)
+                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                    
+                    // Send notification that Bluetooth is connected and all required characteristics are discovered
+                    print("Found characteristic we were looking for!")
+                }
+                if(peripheral.identifier == deviceName) {
+                    greenRedView1.backgroundColor = UIColor.greenColor()
+                } else if( peripheral.identifier == deviceName2) {
+                    greenRedView2.backgroundColor = UIColor.greenColor()
+                }
             }
         }
     }
@@ -262,7 +312,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
         print("CONNECTION WAS DISCONNECTED")
-        greenRedView.backgroundColor = UIColor.redColor()
-        startScanning()
+        if(peripheral.identifier == deviceName) {
+            greenRedView1.backgroundColor = UIColor.redColor()
+            bothAreConnected.firstOne = false
+        } else if (peripheral.identifier == deviceName2) {
+            greenRedView2.backgroundColor = UIColor.redColor()
+            bothAreConnected.secondOne = false
+        }
     }
 }
