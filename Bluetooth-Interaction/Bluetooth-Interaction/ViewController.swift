@@ -21,9 +21,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     let greenRedView1 = UIView()
     let greenRedView2 = UIView()
     let scanButton =  UIButton()
-    let sendButton = UIButton()
-    let messageField = UITextField()
-    let messageLabel = UILabel()
+    let send5aButton = UIButton()
+    let send7cButton = UIButton()
+    
     let chartView = LineChartView()
     var months: [String]!
     var unitsSold: [Double]!
@@ -91,15 +91,15 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         scanButton.addTarget(self, action: "startScanning", forControlEvents: UIControlEvents.TouchUpInside)
         scanButton.backgroundColor = UIColor.blackColor()
         
-        sendButton.setTitle("Send", forState: UIControlState.Normal)
-        sendButton.addTarget(self, action: "sendMessage", forControlEvents: UIControlEvents.TouchUpInside)
-        sendButton.backgroundColor = UIColor.blackColor()
+        send5aButton.setTitle("5/a", forState: UIControlState.Normal)
+        send5aButton.addTarget(self, action: "send5aMessage", forControlEvents: UIControlEvents.TouchUpInside)
+        send5aButton.backgroundColor = UIColor.blackColor()
         
-        messageField.textAlignment = .Center
-        messageField.autocorrectionType = UITextAutocorrectionType.No
-        messageField.borderStyle = .RoundedRect
+    
+        send7cButton.setTitle("7/c", forState: UIControlState.Normal)
+        send7cButton.addTarget(self, action: "send7cMessage", forControlEvents: UIControlEvents.TouchUpInside)
+        send7cButton.backgroundColor = UIColor.blackColor()
         
-        messageLabel.text = "Message to send"
         greenRedView1.backgroundColor = UIColor.redColor()
         greenRedView2.backgroundColor = UIColor.redColor()
         
@@ -109,9 +109,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         
         
         backgroundView.addSubview(scanButton)
-        backgroundView.addSubview(sendButton)
-        backgroundView.addSubview(messageField)
-        backgroundView.addSubview(messageLabel)
+        backgroundView.addSubview(send5aButton)
+        backgroundView.addSubview(send7cButton)
         backgroundView.addSubview(greenRedView1)
         backgroundView.addSubview(greenRedView2)
         backgroundView.addSubview(chartView)
@@ -122,33 +121,31 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             make.centerX.equalTo(self.view)
         }
         scanButton.snp_makeConstraints { (make) -> Void in
-            make.right.equalTo(sendButton.snp_left).offset(-10)
-            make.bottom.equalTo(sendButton)
+            make.left.equalTo(backgroundView)
+            make.bottom.equalTo(send5aButton)
             make.width.height.equalTo(60)
         }
-        sendButton.snp_makeConstraints { (make) -> Void in
-            make.top.equalTo(messageField.snp_bottom)
-            make.centerX.equalTo(messageField)
-            make.width.height.equalTo(60)
-        }
-        messageField.snp_makeConstraints { (make) -> Void in
+        send5aButton.snp_makeConstraints { (make) -> Void in
             make.centerX.equalTo(backgroundView)
             make.centerY.equalTo(backgroundView).offset(50)
-            make.width.equalTo(200)
-            make.height.equalTo(50)
+            make.height.equalTo(60)
+            make.width.equalTo(140)
         }
-        messageLabel.snp_makeConstraints { (make) -> Void in
-            make.bottom.equalTo(messageField.snp_top)
-            make.centerX.equalTo(messageField)
+        send7cButton.snp_makeConstraints { (make) -> Void in
+            make.centerX.equalTo(send5aButton)
+            make.top.equalTo(send5aButton.snp_bottom).offset(10)
+            make.height.equalTo(send5aButton)
+            make.width.equalTo(send5aButton)
         }
+
         greenRedView1.snp_makeConstraints { (make) -> Void in
             make.height.width.equalTo(20)
-            make.bottom.equalTo(messageLabel.snp_top).offset(-20)
-            make.centerX.equalTo(messageField)
+            make.bottom.equalTo(send5aButton.snp_top).offset(-20)
+            make.centerX.equalTo(send5aButton)
         }
         greenRedView2.snp_makeConstraints { (make) -> Void in
             make.height.width.equalTo(20)
-            make.bottom.equalTo(messageLabel.snp_top).offset(-20)
+            make.bottom.equalTo(send5aButton.snp_top).offset(-20)
             make.left.equalTo(greenRedView1.snp_right).offset(10)
         }
         chartView.snp_makeConstraints { (make) -> Void in
@@ -162,19 +159,34 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func startScanning() {
         print("Started Scanning!")
+        greenRedView1.backgroundColor = UIColor.redColor()
+        greenRedView2.backgroundColor = UIColor.redColor()
+        bothAreConnected.firstOne = false
+        bothAreConnected.secondOne = false
         //Could add service UUID here to scan for only relevant services
         centralManager = CBCentralManager(delegate: self, queue: nil)
     }
     
-    func sendMessage() {
-        if let message = messageField.text {
-            let message2 = "a"
-            let data = message.dataUsingEncoding(NSUTF8StringEncoding)
-            let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
-            if terminalChar != nil && terminalChar2 != nil {
-                peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
-                peripheral2!.writeValue(data2!, forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
-            }
+    func send5aMessage() {
+        let message = "5"
+        let message2 = "a"
+        
+        let data = message.dataUsingEncoding(NSUTF8StringEncoding)
+        let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
+        if terminalChar != nil && terminalChar2 != nil {
+            peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+            peripheral2!.writeValue(data2!, forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
+        }
+    }
+    func send7cMessage() {
+        let message = "7"
+        let message2 = "c"
+        
+        let data = message.dataUsingEncoding(NSUTF8StringEncoding)
+        let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
+        if terminalChar != nil && terminalChar2 != nil {
+            peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+            peripheral2!.writeValue(data2!, forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
         }
     }
     
@@ -188,7 +200,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func centralManagerDidUpdateState(central: CBCentralManager) {
-        print("Checking state")
         switch (central.state) {
         case .PoweredOff:
             print("CoreBluetooth BLE hardware is powered off")
@@ -233,12 +244,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             } else if (nameOfDeviceFound == deviceName2) {
                 print("Discovered \(nameOfDeviceFound)")
                 print("")
-                
                 print(peripheral)
-                // Stop scanning
-                //                self.centralManager.stopScan()
-                //                print("Stopped Scanning")
-                // Set as the peripheral to use and establish connection
+
                 self.peripheral2 = peripheral
                 self.peripheral2.delegate = self
                 self.centralManager.connectPeripheral(peripheral, options: nil)
@@ -264,7 +271,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         print("Connected:\(state)")
     }
     
-    //    // Check if the service discovered is a valid IR Temperature Service
     func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
         if(error != nil) {
             print(error?.description)
@@ -307,11 +313,11 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-        print("Failed to connect to peripheral.")
+        print(error)
     }
     
     func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-        print("CONNECTION WAS DISCONNECTED")
+        print("didDisconnectPeripheral")
         if(peripheral.identifier == deviceName) {
             greenRedView1.backgroundColor = UIColor.redColor()
             bothAreConnected.firstOne = false
@@ -319,5 +325,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             greenRedView2.backgroundColor = UIColor.redColor()
             bothAreConnected.secondOne = false
         }
+        startScanning()
     }
 }
