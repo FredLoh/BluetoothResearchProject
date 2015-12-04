@@ -14,12 +14,14 @@ import Charts
 struct bothConnected {
     var firstOne = false
     var secondOne = false
+    var thirdOne = false
 }
 
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
     let backgroundView = UIView()
     let greenRedView1 = UIView()
     let greenRedView2 = UIView()
+    let greenRedView3 = UIView()
     let scanButton =  UIButton()
     let send5aButton = UIButton()
     let send7cButton = UIButton()
@@ -29,49 +31,29 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     var unitsSold: [Double]!
     var bothAreConnected = bothConnected()
     
-    let deviceName = NSUUID(UUIDString: "350EA7E4-E6C1-0BDA-FCB9-8478AFA347FD")
-    let deviceName2 = NSUUID(UUIDString: "64D3E7BE-B480-82E7-5B2B-E8B8DDE0B52D")
+    let RFDuino1 = NSUUID(UUIDString: "DBBD02C8-765D-4340-95DC-35A7C69F420A")
+    let RFDuino2 = NSUUID(UUIDString: "83429FD9-33CA-A46C-E698-E55A11F638E7")
+//    let RFDuino1 = NSUUID(UUIDString: "119B0B6A-1D9E-9079-34AA-2E81AED90D4C")
+//    let RFDuino2 = NSUUID(UUIDString: "87FC4435-943F-9D4E-0D1D-135FDB41E724")
+    let RFDuino3 = NSUUID(UUIDString: "26BEB8B3-2499-0418-1B7F-42209C63B40B")
     
+    let serviceUUIDString = "FE84"
+    let serviceUUIDString2 = "FE85"
+
+    let characteristicUUIDString = "2D30C083-F39F-4CE6-923F-3484EA480596"
+
     // BLE
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
     var peripheral2: CBPeripheral!
+    var peripheral3: CBPeripheral!
     //    var characteristics: CBCharacteristic!
     var terminalChar:CBCharacteristic!
     var terminalChar2:CBCharacteristic!
+    var terminalChar3:CBCharacteristic!
     
     var bluetoothAvailable = false
     
-    func setChart(dataPoints: [String], values: [Double]) {
-        chartView.noDataText = "You need to provide data for the chart."
-        chartView.descriptionText = ""
-        
-        var dataEntries: [BarChartDataEntry] = []
-        
-        for i in 0..<dataPoints.count {
-            let dataEntry = BarChartDataEntry(value: values[i], xIndex: i)
-            dataEntries.append(dataEntry)
-        }
-        
-        let chartDataSet = LineChartDataSet(yVals: dataEntries, label: "Test Data")
-        let chartData = LineChartData(xVals: months, dataSet: chartDataSet)
-        chartView.data = chartData
-        //        chartDataSet.colors = ChartColorTemplates.joyful()
-        chartView.xAxis.labelPosition = .Bottom
-        chartView.notifyDataSetChanged()
-        
-    }
-    
-    func changeChart() {
-        print("Changing Chart")
-        print(months)
-        months.append("Test")
-        months.append("Test2")
-        unitsSold.append(2.0)
-        unitsSold.append(3.0)
-        setChart(months, values: unitsSold)
-        chartView.notifyDataSetChanged()
-    }
     func dismissKeyboard() {
         //Causes the view (or one of its embedded text fields) to resign the first responder status.
         view.endEditing(true)
@@ -79,29 +61,25 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     
     override func viewDidLoad() {
-        
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         self.view.addGestureRecognizer(tap)
-        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-        unitsSold = [1.0, 4.0, 6.0, 3.0, 5.0, 8.0, 4.0, 8.0, 2.0, 4.0, 5.0, 4.0]
-        
-        setChart(months, values: unitsSold)
         
         scanButton.setTitle("Scan", forState: UIControlState.Normal)
         scanButton.addTarget(self, action: "startScanning", forControlEvents: UIControlEvents.TouchUpInside)
         scanButton.backgroundColor = UIColor.blackColor()
         
-        send5aButton.setTitle("5/a", forState: UIControlState.Normal)
+        send5aButton.setTitle("1/a/1", forState: UIControlState.Normal)
         send5aButton.addTarget(self, action: "send5aMessage", forControlEvents: UIControlEvents.TouchUpInside)
         send5aButton.backgroundColor = UIColor.blackColor()
         
-    
-        send7cButton.setTitle("7/c", forState: UIControlState.Normal)
+        
+        send7cButton.setTitle("3/c/3", forState: UIControlState.Normal)
         send7cButton.addTarget(self, action: "send7cMessage", forControlEvents: UIControlEvents.TouchUpInside)
         send7cButton.backgroundColor = UIColor.blackColor()
         
         greenRedView1.backgroundColor = UIColor.redColor()
         greenRedView2.backgroundColor = UIColor.redColor()
+        greenRedView3.backgroundColor = UIColor.redColor()
         
         
         
@@ -113,6 +91,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         backgroundView.addSubview(send7cButton)
         backgroundView.addSubview(greenRedView1)
         backgroundView.addSubview(greenRedView2)
+        backgroundView.addSubview(greenRedView3)
         backgroundView.addSubview(chartView)
         
         
@@ -137,7 +116,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             make.height.equalTo(send5aButton)
             make.width.equalTo(send5aButton)
         }
-
+        
         greenRedView1.snp_makeConstraints { (make) -> Void in
             make.height.width.equalTo(20)
             make.bottom.equalTo(send5aButton.snp_top).offset(-20)
@@ -147,6 +126,11 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             make.height.width.equalTo(20)
             make.bottom.equalTo(send5aButton.snp_top).offset(-20)
             make.left.equalTo(greenRedView1.snp_right).offset(10)
+        }
+        greenRedView3.snp_makeConstraints { (make) -> Void in
+            make.height.width.equalTo(20)
+            make.bottom.equalTo(send5aButton.snp_top).offset(-20)
+            make.left.equalTo(greenRedView2.snp_right).offset(10)
         }
         chartView.snp_makeConstraints { (make) -> Void in
             make.left.right.equalTo(backgroundView)
@@ -161,33 +145,46 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         print("Started Scanning!")
         greenRedView1.backgroundColor = UIColor.redColor()
         greenRedView2.backgroundColor = UIColor.redColor()
+        greenRedView3.backgroundColor = UIColor.redColor()
         bothAreConnected.firstOne = false
         bothAreConnected.secondOne = false
+        bothAreConnected.thirdOne = false
         //Could add service UUID here to scan for only relevant services
         centralManager = CBCentralManager(delegate: self, queue: nil)
     }
     
     func send5aMessage() {
-        let message = "5"
-        let message2 = "a"
+        let message = "1"
+        let message2 = "1"
+        let message3 = "1"
         
         let data = message.dataUsingEncoding(NSUTF8StringEncoding)
         let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
-        if terminalChar != nil && terminalChar2 != nil {
-            peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
-            peripheral2!.writeValue(data2!, forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
-        }
+        let data3 = message3.dataUsingEncoding(NSUTF8StringEncoding)
+        
+//        if terminalChar != nil && terminalChar2 != nil {
+//            peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+//            peripheral2!.writeValue(data2!, forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
+//            peripheral3!.writeValue(data3!, forCharacteristic: terminalChar3, type: CBCharacteristicWriteType.WithResponse)
+//        }
+        peripheral!.writeValue(data2!, forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
     }
     func send7cMessage() {
-        let message = "7"
-        let message2 = "c"
+        let message = "2"
+        let message2 = "2"
+        let message3 = "2"
         
         let data = message.dataUsingEncoding(NSUTF8StringEncoding)
         let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
-        if terminalChar != nil && terminalChar2 != nil {
-            peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
-            peripheral2!.writeValue(data2!, forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
-        }
+        let data3 = message3.dataUsingEncoding(NSUTF8StringEncoding)
+//        if terminalChar != nil && terminalChar2 != nil && terminalChar3 != nil {
+//            peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+//            peripheral2!.writeValue(data2!, forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
+//            peripheral3!.writeValue(data3!, forCharacteristic: terminalChar3, type: CBCharacteristicWriteType.WithoutResponse)
+//            
+//        }
+        peripheral!.writeValue(data!,  forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+        
     }
     
     func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
@@ -228,7 +225,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         //        print(peripheral)
         if let nameOfDeviceFound: NSUUID = peripheral.identifier {
-            if (nameOfDeviceFound == deviceName) {
+            if (nameOfDeviceFound == RFDuino1) {
                 print("Discovered \(nameOfDeviceFound)")
                 print("")
                 
@@ -238,26 +235,40 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 self.peripheral.delegate = self
                 self.centralManager.connectPeripheral(peripheral, options: nil)
                 bothAreConnected.firstOne = true
-                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true) {
+                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true && bothAreConnected.thirdOne == true) {
                     self.centralManager.stopScan()
                 }
-            } else if (nameOfDeviceFound == deviceName2) {
+            } else if (nameOfDeviceFound == RFDuino2) {
                 print("Discovered \(nameOfDeviceFound)")
                 print("")
                 print(peripheral)
-
+                
                 self.peripheral2 = peripheral
                 self.peripheral2.delegate = self
                 self.centralManager.connectPeripheral(peripheral, options: nil)
                 bothAreConnected.secondOne = true
-                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true) {
+                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true && bothAreConnected.thirdOne == true) {
+                    print("Stopped Scanning")
+                    self.centralManager.stopScan()
+                }
+                
+            } else if (nameOfDeviceFound == RFDuino3) {
+                print("Discovered \(nameOfDeviceFound)")
+                print("")
+                print(peripheral)
+                
+                self.peripheral3 = peripheral
+                self.peripheral3.delegate = self
+                self.centralManager.connectPeripheral(peripheral, options: nil)
+                bothAreConnected.thirdOne = true
+                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true && bothAreConnected.thirdOne == true) {
                     print("Stopped Scanning")
                     self.centralManager.stopScan()
                 }
                 
             }
             else {
-                //                print("Discovered non \(deviceName) device.")
+                print("Discovered \(peripheral) device.")
             }
         }
     }
@@ -266,7 +277,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         print("Did connect to peripheral.")
         print("")
         peripheral.delegate = self
-        peripheral.discoverServices([CBUUID(string: "DFB0")])
+        print(peripheral.services)
+        
+        peripheral.discoverServices([CBUUID(string: serviceUUIDString)])
         let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
         print("Connected:\(state)")
     }
@@ -278,8 +291,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         
         for svc in peripheral.services! {
             print("Service \(svc)\n")
-            print("Discovering Characteristics for Service : \(svc)")
-            peripheral.discoverCharacteristics([CBUUID(string: "DFB1")], forService: svc as CBService)
+            print("Discovering Characteristics for Service : \(svc.UUID)")
+            print(svc.characteristics)
+            peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString)], forService: svc as CBService)
         }
     }
     
@@ -288,25 +302,31 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             print(error?.description)
         }
         for characteristic in service.characteristics! {
-            if characteristic.UUID == CBUUID(string: "DFB1") {
-                if peripheral.identifier == deviceName {
+            if characteristic.UUID == CBUUID(string: characteristicUUIDString) {
+                print("Found charactersitc")
+                if peripheral.identifier == RFDuino1 {
                     self.terminalChar = (characteristic as CBCharacteristic)
                     peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
                     
-                    // Send notification that Bluetooth is connected and all required characteristics are discovered
                     print("Found characteristic we were looking for!")
                     print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
-                } else if peripheral.identifier == deviceName2 {
+                } else if peripheral.identifier == RFDuino2 {
                     self.terminalChar2 = (characteristic as CBCharacteristic)
                     peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
                     
-                    // Send notification that Bluetooth is connected and all required characteristics are discovered
+                    print("Found characteristic we were looking for!")
+                } else if peripheral.identifier == RFDuino3 {
+                    self.terminalChar3 = (characteristic as CBCharacteristic)
+                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                    
                     print("Found characteristic we were looking for!")
                 }
-                if(peripheral.identifier == deviceName) {
+                if(peripheral.identifier == RFDuino1) {
                     greenRedView1.backgroundColor = UIColor.greenColor()
-                } else if( peripheral.identifier == deviceName2) {
+                } else if( peripheral.identifier == RFDuino2) {
                     greenRedView2.backgroundColor = UIColor.greenColor()
+                } else if peripheral.identifier == RFDuino3 {
+                    greenRedView3.backgroundColor = UIColor.greenColor()
                 }
             }
         }
@@ -318,12 +338,15 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
         print("didDisconnectPeripheral")
-        if(peripheral.identifier == deviceName) {
+        if(peripheral.identifier == RFDuino1) {
             greenRedView1.backgroundColor = UIColor.redColor()
             bothAreConnected.firstOne = false
-        } else if (peripheral.identifier == deviceName2) {
+        } else if (peripheral.identifier == RFDuino2) {
             greenRedView2.backgroundColor = UIColor.redColor()
             bothAreConnected.secondOne = false
+        } else if (peripheral.identifier == RFDuino3) {
+            greenRedView3.backgroundColor = UIColor.redColor()
+            bothAreConnected.thirdOne = false
         }
         startScanning()
     }
