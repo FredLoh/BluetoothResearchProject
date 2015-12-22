@@ -17,6 +17,7 @@
 		DBB683D81BDEBDBE002ED471 /* Bluetooth_InteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB683D71BDEBDBE002ED471 /* Bluetooth_InteractionTests.swift */; };
 		DBB683E31BDEBDBE002ED471 /* Bluetooth_InteractionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB683E21BDEBDBE002ED471 /* Bluetooth_InteractionUITests.swift */; };
 		DBE8FC631C29F91D001D4E39 /* CellGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE8FC621C29F91D001D4E39 /* CellGeneration.swift */; };
+		DBE8FC661C29FF8E001D4E39 /* GlobalVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE8FC651C29FF8E001D4E39 /* GlobalVariables.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		DBB683E21BDEBDBE002ED471 /* Bluetooth_InteractionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bluetooth_InteractionUITests.swift; sourceTree = "<group>"; };
 		DBB683E41BDEBDBE002ED471 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBE8FC621C29F91D001D4E39 /* CellGeneration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellGeneration.swift; sourceTree = "<group>"; };
+		DBE8FC651C29FF8E001D4E39 /* GlobalVariables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalVariables.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +127,7 @@
 		DBB683BE1BDEBDBE002ED471 /* Bluetooth-Interaction */ = {
 			isa = PBXGroup;
 			children = (
+				DBE8FC641C29FF87001D4E39 /* Globals */,
 				DBE8FC611C29F915001D4E39 /* Cells */,
 				DBB683BF1BDEBDBE002ED471 /* AppDelegate.swift */,
 				DBB683C11BDEBDBE002ED471 /* ViewController.swift */,
@@ -161,6 +164,14 @@
 				DBE8FC621C29F91D001D4E39 /* CellGeneration.swift */,
 			);
 			name = Cells;
+			sourceTree = "<group>";
+		};
+		DBE8FC641C29FF87001D4E39 /* Globals */ = {
+			isa = PBXGroup;
+			children = (
+				DBE8FC651C29FF8E001D4E39 /* GlobalVariables.swift */,
+			);
+			name = Globals;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -349,6 +360,7 @@
 				DBB683C01BDEBDBE002ED471 /* AppDelegate.swift in Sources */,
 				DBB683C81BDEBDBE002ED471 /* Bluetooth_Interaction.xcdatamodeld in Sources */,
 				DBE8FC631C29F91D001D4E39 /* CellGeneration.swift in Sources */,
+				DBE8FC661C29FF8E001D4E39 /* GlobalVariables.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

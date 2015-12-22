@@ -22,22 +22,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     let tableView = UITableView()
     var bothAreConnected = bothConnected()
     var periphArray = [CBPeripheral]()
+    var usefulPeriphArray = [CBPeripheral]()
     var connectionArray = [Bool]()
-    
+    let nextButton = UIButton()
     let RFDuino1 = NSUUID(UUIDString: "DBBD02C8-765D-4340-95DC-35A7C69F420A")
     let RFDuino2 = NSUUID(UUIDString: "83429FD9-33CA-A46C-E698-E55A11F638E7")
     let RFDuino3 = NSUUID(UUIDString: "26BEB8B3-2499-0418-1B7F-42209C63B40B")
     
     let serviceUUIDString = "FE84"
-    let serviceUUIDString2 = "FE84"
     
     let characteristicUUIDString = "2D30C083-F39F-4CE6-923F-3484EA480596"
     
     // BLE
     var centralManager: CBCentralManager!
-    var peripheral: CBPeripheral!
-    var peripheral2: CBPeripheral!
-    var peripheral3: CBPeripheral!
+    
     //    var characteristics: CBCharacteristic!
     var terminalChar:CBCharacteristic!
     var terminalChar2:CBCharacteristic!
@@ -77,7 +75,26 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         return 70
     }
     
+    func nextView() {
+        for(var i = 0; i < connectionArray.count; i++) {
+            if connectionArray[i].boolValue == true {
+                periphArray[i].delegate = self
+                self.centralManager.connectPeripheral(periphArray[i], options: nil)
+            }
+        }
+        bothAreConnected.firstOne = true
+    }
+    
     override func viewDidLoad() {
+        navigationItem.title = "Peripheral List"
+        navigationController?.navigationBar.addSubview(nextButton)
+        nextButton.setBackgroundImage(UIImage(named: "next"), forState: UIControlState.Normal)
+        nextButton.addTarget(self, action: "nextView", forControlEvents: UIControlEvents.TouchUpInside)
+        nextButton.snp_makeConstraints { (make) -> Void in
+            make.centerY.equalTo((navigationController?.navigationBar)!)
+            make.right.equalTo((navigationController?.navigationBar)!).offset(-5)
+            make.height.width.equalTo(30)
+        }
         centralManager = CBCentralManager(delegate: self, queue: nil)
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         self.view.addGestureRecognizer(tap)
@@ -106,59 +123,23 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         //Could add service UUID here to scan for only relevant services
         centralManager = CBCentralManager(delegate: self, queue: nil)
     }
-    func send5aMessage() {
-        let message = "c"
-        let message2 = "c"
-        let message3 = "i"
-        
-        let data = message.dataUsingEncoding(NSUTF8StringEncoding)
-        let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
-        let data3 = message3.dataUsingEncoding(NSUTF8StringEncoding)
-        
-        if terminalChar != nil && terminalChar2 != nil {
-            peripheral!.writeValue(data!, forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
-            peripheral2!.writeValue(data2!,  forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
-        } else if terminalChar != nil && terminalChar2 == nil {
-            peripheral!.writeValue(data!, forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
-        } else if terminalChar == nil && terminalChar2 != nil {
-            peripheral2!.writeValue(data2!,  forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
-        }
-    }
-    func send7cMessage() {
-        let message = "g"
-        let message2 = "g"
-        let message3 = "j"
-        
-        let data = message.dataUsingEncoding(NSUTF8StringEncoding)
-        let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
-        let data3 = message3.dataUsingEncoding(NSUTF8StringEncoding)
-        if terminalChar != nil && terminalChar2 != nil {
-            peripheral!.writeValue(data!, forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
-            peripheral2!.writeValue(data2!,  forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
-        } else if terminalChar != nil && terminalChar2 == nil {
-            peripheral!.writeValue(data!, forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
-        } else if terminalChar == nil && terminalChar2 != nil {
-            peripheral2!.writeValue(data2!,  forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
-        }
-        
-    }
-    func send8dMessage() {
-        let message = "k"
-        let message2 = "k"
-        let message3 = "j"
-        
-        let data = message.dataUsingEncoding(NSUTF8StringEncoding)
-        let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
-        let data3 = message3.dataUsingEncoding(NSUTF8StringEncoding)
-        if terminalChar != nil && terminalChar2 != nil {
-            peripheral!.writeValue(data!, forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
-            peripheral2!.writeValue(data2!,  forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
-        } else if terminalChar != nil && terminalChar2 == nil {
-            peripheral!.writeValue(data!, forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
-        } else if terminalChar == nil && terminalChar2 != nil {
-            peripheral2!.writeValue(data2!,  forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
-        }
-    }
+    //    func send8dMessage() {
+    //        let message = "k"
+    //        let message2 = "k"
+    //        let message3 = "j"
+    //
+    //        let data = message.dataUsingEncoding(NSUTF8StringEncoding)
+    //        let data2 = message2.dataUsingEncoding(NSUTF8StringEncoding)
+    //        let data3 = message3.dataUsingEncoding(NSUTF8StringEncoding)
+    //        if terminalChar != nil && terminalChar2 != nil {
+    //            peripheral!.writeValue(data!, forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+    //            peripheral2!.writeValue(data2!,  forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
+    //        } else if terminalChar != nil && terminalChar2 == nil {
+    //            peripheral!.writeValue(data!, forCharacteristic: terminalChar, type: CBCharacteristicWriteType.WithoutResponse)
+    //        } else if terminalChar == nil && terminalChar2 != nil {
+    //            peripheral2!.writeValue(data2!,  forCharacteristic: terminalChar2, type: CBCharacteristicWriteType.WithoutResponse)
+    //        }
+    //    }
     
     func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
         print("Value was sent")
@@ -195,72 +176,18 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             discoverDevices()
         }
     }
+    
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         periphArray.append(peripheral)
         connectionArray.append(false)
         tableView.reloadData()
-        print(periphArray)
-        //        if let nameOfDeviceFound: NSUUID = peripheral.identifier {
-        //            if (nameOfDeviceFound == RFDuino1) {
-        //                print("Discovered \(nameOfDeviceFound)")
-        //                print("")
-        //
-        //                print(peripheral)
-        //
-        //                self.peripheral = peripheral
-        //                self.peripheral.delegate = self
-        //                self.centralManager.connectPeripheral(peripheral, options: nil)
-        //                bothAreConnected.firstOne = true
-        //                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true && bothAreConnected.thirdOne == true) {
-        //                    self.centralManager.stopScan()
-        //                }
-        //            } else if (nameOfDeviceFound == RFDuino2) {
-        //                print("Discovered \(nameOfDeviceFound)")
-        //                print("")
-        //                print(peripheral)
-        //
-        //                self.peripheral2 = peripheral
-        //                self.peripheral2.delegate = self
-        //                self.centralManager.connectPeripheral(peripheral, options: nil)
-        //                bothAreConnected.secondOne = true
-        //                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true && bothAreConnected.thirdOne == true) {
-        //                    print("Stopped Scanning")
-        //                    self.centralManager.stopScan()
-        //                }
-        //
-        //            } else if (nameOfDeviceFound == RFDuino3) {
-        //                print("Discovered \(nameOfDeviceFound)")
-        //                print("")
-        //                print(peripheral)
-        //
-        //                self.peripheral3 = peripheral
-        //                self.peripheral3.delegate = self
-        //                self.centralManager.connectPeripheral(peripheral, options: nil)
-        //                bothAreConnected.thirdOne = true
-        //                if(bothAreConnected.firstOne == true && bothAreConnected.secondOne == true && bothAreConnected.thirdOne == true) {
-        //                    print("Stopped Scanning")
-        //                    self.centralManager.stopScan()
-        //                }
-        //
-        //            }
-        //            else {
-        //                //                print("Discovered \(peripheral) device.")
-        //            }
-        //        }
     }
     
     func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
-        print("Did connect to peripheral.")
-        print("")
-        peripheral.delegate = self
-        print(peripheral.services)
-        if peripheral.identifier == RFDuino1 {
-            peripheral.discoverServices([CBUUID(string: serviceUUIDString)])
-        } else if peripheral.identifier == RFDuino2 {
-            peripheral.discoverServices([CBUUID(string: serviceUUIDString2)])
-        }
+        print("Did connect to peripheral.", separator: "")
+        peripheral.discoverServices([CBUUID(string: serviceUUIDString)])
         let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
-        print("Connected:\(state)")
+        print("Connected: \(state)")
     }
     
     func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
