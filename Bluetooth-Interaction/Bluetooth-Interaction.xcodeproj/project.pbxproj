@@ -16,6 +16,7 @@
 		DBB683CD1BDEBDBE002ED471 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBB683CB1BDEBDBE002ED471 /* LaunchScreen.storyboard */; };
 		DBB683D81BDEBDBE002ED471 /* Bluetooth_InteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB683D71BDEBDBE002ED471 /* Bluetooth_InteractionTests.swift */; };
 		DBB683E31BDEBDBE002ED471 /* Bluetooth_InteractionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB683E21BDEBDBE002ED471 /* Bluetooth_InteractionUITests.swift */; };
+		DBE8FC631C29F91D001D4E39 /* CellGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE8FC621C29F91D001D4E39 /* CellGeneration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		DBB683DE1BDEBDBE002ED471 /* Bluetooth-InteractionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Bluetooth-InteractionUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBB683E21BDEBDBE002ED471 /* Bluetooth_InteractionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bluetooth_InteractionUITests.swift; sourceTree = "<group>"; };
 		DBB683E41BDEBDBE002ED471 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DBE8FC621C29F91D001D4E39 /* CellGeneration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellGeneration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 		DBB683BE1BDEBDBE002ED471 /* Bluetooth-Interaction */ = {
 			isa = PBXGroup;
 			children = (
+				DBE8FC611C29F915001D4E39 /* Cells */,
 				DBB683BF1BDEBDBE002ED471 /* AppDelegate.swift */,
 				DBB683C11BDEBDBE002ED471 /* ViewController.swift */,
 				DBB683C31BDEBDBE002ED471 /* Main.storyboard */,
@@ -150,6 +153,14 @@
 				DBB683E41BDEBDBE002ED471 /* Info.plist */,
 			);
 			path = "Bluetooth-InteractionUITests";
+			sourceTree = "<group>";
+		};
+		DBE8FC611C29F915001D4E39 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				DBE8FC621C29F91D001D4E39 /* CellGeneration.swift */,
+			);
+			name = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -337,6 +348,7 @@
 				DBB683C21BDEBDBE002ED471 /* ViewController.swift in Sources */,
 				DBB683C01BDEBDBE002ED471 /* AppDelegate.swift in Sources */,
 				DBB683C81BDEBDBE002ED471 /* Bluetooth_Interaction.xcdatamodeld in Sources */,
+				DBE8FC631C29F91D001D4E39 /* CellGeneration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
