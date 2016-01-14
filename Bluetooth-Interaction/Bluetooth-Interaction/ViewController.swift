@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 import SnapKit
-//import Charts
+
 
 struct bothConnected {
     var firstOne = false
@@ -19,27 +19,29 @@ struct bothConnected {
 
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, UITableViewDelegate, UITableViewDataSource {
     let backgroundView = UIView()
+    let topBar = UIView()
+    
     let tableView = UITableView()
     var bothAreConnected = bothConnected()
     var periphArray = [CBPeripheral]()
     var usefulPeriphArray = [CBPeripheral]()
     var connectionArray = [Bool]()
     let nextButton = UIButton()
+    let optionsButton = UIButton()
+    
     let RFDuino1 = NSUUID(UUIDString: "DBBD02C8-765D-4340-95DC-35A7C69F420A")
     let RFDuino2 = NSUUID(UUIDString: "83429FD9-33CA-A46C-E698-E55A11F638E7")
     let RFDuino3 = NSUUID(UUIDString: "26BEB8B3-2499-0418-1B7F-42209C63B40B")
     
-    let serviceUUIDString = "FE84"
+    var serviceUUIDString = "2220"
     
-    let characteristicUUIDString = "2D30C083-F39F-4CE6-923F-3484EA480596"
+    var characteristicUUIDString = "2221"
     
     // BLE
     var centralManager: CBCentralManager!
     
     //    var characteristics: CBCharacteristic!
-    var terminalChar:CBCharacteristic!
-    var terminalChar2:CBCharacteristic!
-    var terminalChar3:CBCharacteristic!
+    
     
     var bluetoothAvailable = false
     
@@ -69,6 +71,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 return generatePeripheralCell(name, identifier: string, color: color)
             }
         }
+        //        return
         return generatePeripheralCell("Error", identifier: "0000-0000-0000-0000", color: false)
     }
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -76,25 +79,53 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func nextView() {
-        for(var i = 0; i < connectionArray.count; i++) {
-            if connectionArray[i].boolValue == true {
-                periphArray[i].delegate = self
-                self.centralManager.connectPeripheral(periphArray[i], options: nil)
+        for connections in connectionArray {
+            if connections == true {
+                for(var i = 0; i < connectionArray.count; i++) {
+                    if connectionArray[i].boolValue == true {
+                        periphArray[i].delegate = self
+                        self.centralManager.connectPeripheral(periphArray[i], options: nil)
+                        usefulPeriphArray.append(periphArray[i])
+                    }
+                }
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let controller = storyboard.instantiateViewControllerWithIdentifier("InfoSendingView") as! InfoSendingView
+                controller.periphArray = self.usefulPeriphArray
+                self.presentViewController(controller, animated: true, completion: nil)
+                bothAreConnected.firstOne = true
+                break
             }
         }
-        bothAreConnected.firstOne = true
     }
     
     override func viewDidLoad() {
+        navigationController?.navigationBar.hidden = true
         navigationItem.title = "Peripheral List"
-        navigationController?.navigationBar.addSubview(nextButton)
+        
         nextButton.setBackgroundImage(UIImage(named: "next"), forState: UIControlState.Normal)
+        optionsButton.setBackgroundImage(UIImage(named: "Cog"), forState: UIControlState.Normal)
+        
         nextButton.addTarget(self, action: "nextView", forControlEvents: UIControlEvents.TouchUpInside)
+        optionsButton.addTarget(self, action: "openOptionsMenu", forControlEvents: UIControlEvents.TouchUpInside)
+        topBar.addSubview(nextButton)
+        topBar.addSubview(optionsButton)
+        backgroundView.addSubview(topBar)
+        topBar.snp_makeConstraints { (make) -> Void in
+            make.left.right.equalTo(backgroundView)
+            make.top.equalTo(backgroundView).offset(20)
+            make.height.equalTo(40)
+        }
         nextButton.snp_makeConstraints { (make) -> Void in
-            make.centerY.equalTo((navigationController?.navigationBar)!)
-            make.right.equalTo((navigationController?.navigationBar)!).offset(-5)
+            make.centerY.equalTo(topBar)
+            make.right.equalTo(topBar).offset(-5)
             make.height.width.equalTo(30)
         }
+        optionsButton.snp_makeConstraints { (make) -> Void in
+            make.centerY.equalTo(topBar)
+            make.left.equalTo(topBar).offset(5)
+            make.height.width.equalTo(30)
+        }
+        
         centralManager = CBCentralManager(delegate: self, queue: nil)
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         self.view.addGestureRecognizer(tap)
@@ -110,7 +141,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             make.centerX.equalTo(self.view)
         }
         tableView.snp_makeConstraints { (make) -> Void in
-            make.left.bottom.right.top.equalTo(backgroundView)
+            make.left.bottom.right.equalTo(backgroundView)
+            make.top.equalTo(topBar.snp_bottom)
         }
         
         
@@ -177,10 +209,21 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
     }
     
+    func isUnique(newValue: CBPeripheral) -> Bool {
+        for value in periphArray {
+            if value == newValue {
+                return false
+            }
+        }
+        return true
+    }
+    
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
-        periphArray.append(peripheral)
-        connectionArray.append(false)
-        tableView.reloadData()
+        if isUnique(peripheral) == true && peripheral.name != nil {
+            periphArray.append(peripheral)
+            connectionArray.append(false)
+            tableView.reloadData()
+        }
     }
     
     func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
@@ -194,12 +237,11 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         if(error != nil) {
             print(error?.description)
         }
-        
-        for svc in peripheral.services! {
-            print("Service \(svc)\n")
-            print("Discovering Characteristics for Service : \(svc.UUID)")
-            print(svc.characteristics)
-            peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString)], forService: svc as CBService)
+        for service in peripheral.services! {
+            print("Service \(service)\n")
+            print("Discovering Characteristics for Service : \(service.UUID)")
+            print(service.characteristics)
+            peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString)], forService: service as CBService)
         }
     }
     
@@ -209,24 +251,26 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
         for characteristic in service.characteristics! {
             if characteristic.UUID == CBUUID(string: characteristicUUIDString) {
-                print("Found charactersitc")
-                if peripheral.identifier == RFDuino1 {
-                    self.terminalChar = (characteristic as CBCharacteristic)
-                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
-                    
-                    print("Found characteristic we were looking for!")
-                    print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
-                } else if peripheral.identifier == RFDuino2 {
-                    self.terminalChar2 = (characteristic as CBCharacteristic)
-                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
-                    
-                    print("Found characteristic we were looking for RFDUINO2!")
-                } else if peripheral.identifier == RFDuino3 {
-                    self.terminalChar3 = (characteristic as CBCharacteristic)
-                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
-                    
-                    print("Found characteristic we were looking for!")
-                }
+                
+                let newPeriphChar = periphChar(periph: peripheral, char: characteristic)
+                periphCharArray.append(newPeriphChar)
+                peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                
+                print("Found characteristic we were looking for!")
+                print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
+                //                } else if peripheral.identifier == RFDuino2 {
+                //                                        print("RFDUINO2")
+                //                    terminalChar2 = (characteristic as CBCharacteristic)
+                //                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                //
+                //                    print("Found characteristic we were looking for RFDUINO2!")
+                //                } else if peripheral.identifier == RFDuino3 {
+                //                                        print("RFDUINO3")
+                //                    terminalChar3 = (characteristic as CBCharacteristic)
+                //                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                //
+                //                    print("Found characteristic we were looking for!")
+                //                }
             }
         }
     }
@@ -245,5 +289,27 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             bothAreConnected.thirdOne = false
         }
         startScanning()
+    }
+    
+    func openOptionsMenu() {
+        let alert = UIAlertController(title: "Options Menu", message: "Please insert correct service and charactersitc UUID string.", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: nil))
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.placeholder = "Current service: \(self.serviceUUIDString)"
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.placeholder = "Current characteristic: \(self.characteristicUUIDString)"
+        })
+        let sendAction = UIAlertAction(title: "Ok", style: .Default) { (action) in
+            if alert.textFields![0].text != "" {
+                self.serviceUUIDString = alert.textFields![0].text!
+            }
+            if alert.textFields![1].text != "" {
+                self.characteristicUUIDString = alert.textFields![1].text!
+            }
+        }
+        alert.addAction(sendAction)
+        self.presentViewController(alert, animated: true, completion: nil)
     }
 }

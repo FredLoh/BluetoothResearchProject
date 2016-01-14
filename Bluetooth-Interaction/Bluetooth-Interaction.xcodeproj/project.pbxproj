@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		4B85E6B7FEA8A9EA9EB58A8F /* Pods_Bluetooth_Interaction.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 138ED1D39414592096CFE683 /* Pods_Bluetooth_Interaction.framework */; };
+		DB5AD0331C4446AB004F2626 /* InfoSendingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5AD0321C4446AB004F2626 /* InfoSendingView.swift */; };
+		DB5AD0361C445533004F2626 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5AD0351C445533004F2626 /* File.swift */; };
 		DBB683C01BDEBDBE002ED471 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB683BF1BDEBDBE002ED471 /* AppDelegate.swift */; };
 		DBB683C21BDEBDBE002ED471 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB683C11BDEBDBE002ED471 /* ViewController.swift */; };
 		DBB683C51BDEBDBE002ED471 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBB683C31BDEBDBE002ED471 /* Main.storyboard */; };
@@ -41,6 +43,8 @@
 		138ED1D39414592096CFE683 /* Pods_Bluetooth_Interaction.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Bluetooth_Interaction.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FA003A8E093CA0012AD2B1E /* Pods-Bluetooth-Interaction.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bluetooth-Interaction.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Bluetooth-Interaction/Pods-Bluetooth-Interaction.debug.xcconfig"; sourceTree = "<group>"; };
 		845048CB1B6162007DEE5EC7 /* Pods-Bluetooth-Interaction.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bluetooth-Interaction.release.xcconfig"; path = "Pods/Target Support Files/Pods-Bluetooth-Interaction/Pods-Bluetooth-Interaction.release.xcconfig"; sourceTree = "<group>"; };
+		DB5AD0321C4446AB004F2626 /* InfoSendingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoSendingView.swift; sourceTree = "<group>"; };
+		DB5AD0351C445533004F2626 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		DBB683BC1BDEBDBE002ED471 /* Bluetooth-Interaction.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bluetooth-Interaction.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBB683BF1BDEBDBE002ED471 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DBB683C11BDEBDBE002ED471 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -102,6 +106,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		DB5AD0341C44552F004F2626 /* ViewGeneration */ = {
+			isa = PBXGroup;
+			children = (
+				DB5AD0351C445533004F2626 /* File.swift */,
+			);
+			name = ViewGeneration;
+			sourceTree = "<group>";
+		};
 		DBB683B31BDEBDBE002ED471 = {
 			isa = PBXGroup;
 			children = (
@@ -127,10 +139,12 @@
 		DBB683BE1BDEBDBE002ED471 /* Bluetooth-Interaction */ = {
 			isa = PBXGroup;
 			children = (
+				DB5AD0341C44552F004F2626 /* ViewGeneration */,
 				DBE8FC641C29FF87001D4E39 /* Globals */,
 				DBE8FC611C29F915001D4E39 /* Cells */,
 				DBB683BF1BDEBDBE002ED471 /* AppDelegate.swift */,
 				DBB683C11BDEBDBE002ED471 /* ViewController.swift */,
+				DB5AD0321C4446AB004F2626 /* InfoSendingView.swift */,
 				DBB683C31BDEBDBE002ED471 /* Main.storyboard */,
 				DBB683C91BDEBDBE002ED471 /* Assets.xcassets */,
 				DBB683CB1BDEBDBE002ED471 /* LaunchScreen.storyboard */,
@@ -357,6 +371,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBB683C21BDEBDBE002ED471 /* ViewController.swift in Sources */,
+				DB5AD0331C4446AB004F2626 /* InfoSendingView.swift in Sources */,
+				DB5AD0361C445533004F2626 /* File.swift in Sources */,
 				DBB683C01BDEBDBE002ED471 /* AppDelegate.swift in Sources */,
 				DBB683C81BDEBDBE002ED471 /* Bluetooth_Interaction.xcdatamodeld in Sources */,
 				DBE8FC631C29F91D001D4E39 /* CellGeneration.swift in Sources */,
