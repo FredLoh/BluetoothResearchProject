@@ -22,7 +22,13 @@ struct individualConsole {
     var arrayOfButtons = [button]()
 }
 
-class InfoSendingView: UIViewController {
+class InfoSendingView: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
+    var serviceUUIDString = "2220"
+    var serviceUUIDString2 = "FE84"
+    
+    var characteristicUUIDString = "2221"
+    var characteristicUUIDString2 = "2D30C083-F39F-4CE6-923F-3484EA480596"
+    
     var periphArray = [CBPeripheral]()
     var topBar = UIView()
     var leftButton = UIButton()
@@ -129,7 +135,6 @@ class InfoSendingView: UIViewController {
     }
     
     override func viewDidLoad() {
-        
         self.view.addSubview(topBar)
         self.view.addSubview(sendButton)
         sendButton.backgroundColor = UIColor(red:0.17, green:0.66, blue:0.04, alpha:1.0)
@@ -226,7 +231,7 @@ class InfoSendingView: UIViewController {
         button6.addTarget(self, action: "button6Clicked", forControlEvents: UIControlEvents.TouchUpInside)
         sendButton.addTarget(self, action: "sendCharacters", forControlEvents: UIControlEvents.TouchUpInside)
         arrayOfConsoles.removeAll()
-        for _ in periphArray {
+        for periph in periphArray {
             arrayOfButtons.removeAll()
             for index in 1...6 {
                 if index == 1 {
@@ -245,17 +250,24 @@ class InfoSendingView: UIViewController {
                     let newButton = button(selected: false, character: "e", button: button5)
                     arrayOfButtons.append(newButton)
                 } else if index == 6 {
-                    let newButton = button(selected: false, character: "f", button: button6)
+                    let newButton = button(selected: false, character: "i", button: button6)
                     arrayOfButtons.append(newButton)
                 }
             }
             let newConsole = individualConsole(periph: periph, arrayOfButtons: arrayOfButtons)
             arrayOfConsoles.append(newConsole)
         }
+        print("PERIPH ARRAY")
+        print(periphArray)
+        for i in periphArray {
+            supercentralManager.connectPeripheral(i, options: nil)
+        }
+        
     }
     
     override func viewDidAppear(animated: Bool) {
         self.view.backgroundColor = UIColor.whiteColor()
+        
     }
     
     func sendCharacters() {
@@ -266,11 +278,119 @@ class InfoSendingView: UIViewController {
                     let data = charString.dataUsingEncoding(NSUTF8StringEncoding)
                     for periphChar in periphCharArray {
                         if periphChar.periph == console.periph {
-                            console.periph?.writeValue(data!, forCharacteristic: periphChar.char!, type: CBCharacteristicWriteType.WithoutResponse)
+                            let charString = button.character
+                            let data = charString!.dataUsingEncoding(NSUTF8StringEncoding)
+                            print("Start: \(currentTimeMillis())")
+                            periphChar.periph!.writeValue(data!, forCharacteristic: periphChar.char!, type: CBCharacteristicWriteType.WithoutResponse)
+                            print("End: \(currentTimeMillis())")
                         }
                     }
                 }
             }
         }
     }
+    func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+        print("Value was sent")
+    }
+    
+    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+        print("Did connect to peripheral.", separator: "")
+        print(peripheral)
+        if peripheral.name == "RFduino" {
+            peripheral.discoverServices([CBUUID(string: serviceUUIDString)])
+            let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
+            print("Connected: \(state)")
+        } else if peripheral.name == "Simblee" {
+            peripheral.discoverServices([CBUUID(string: serviceUUIDString2)])
+            let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
+            print("Connected: \(state)")
+        }
+    }
+    
+    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+        if(error != nil) {
+            print(error?.description)
+        }
+        for service in peripheral.services! {
+            if peripheral.name == "RFduino" {
+                print("Service \(service)\n")
+                print("Discovering Characteristics for Service : \(service.UUID)")
+                print(service.characteristics)
+                peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString)], forService: service as CBService)
+            } else if peripheral.name == "Simblee" {
+                print("Service \(service)\n")
+                print("Discovering Characteristics for Service : \(service.UUID)")
+                print(service.characteristics)
+                peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString2)], forService: service as CBService)
+            }
+        }
+    }
+    
+    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+        if(error != nil) {
+            print(error?.description)
+        }
+        for characteristic in service.characteristics! {
+            if peripheral.name == "RFduino" {
+                if characteristic.UUID == CBUUID(string: characteristicUUIDString) {
+                    
+                    let newPeriphChar = periphChar(periph: peripheral, char: characteristic)
+                    periphCharArray.append(newPeriphChar)
+                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                    
+                    print("Found characteristic we were looking for!")
+                    print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
+                    let charString = "a"
+                    let data = charString.dataUsingEncoding(NSUTF8StringEncoding)
+                    peripheral.writeValue(data!, forCharacteristic: characteristic, type: CBCharacteristicWriteType.WithoutResponse)
+                }
+            } else if peripheral.name == "Simblee" {
+                if characteristic.UUID == CBUUID(string: characteristicUUIDString2) {
+                    
+                    let newPeriphChar = periphChar(periph: peripheral, char: characteristic)
+                    periphCharArray.append(newPeriphChar)
+                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                    
+                    print("Found characteristic we were looking for!")
+                    print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
+                    let charString = "a"
+                    let data = charString.dataUsingEncoding(NSUTF8StringEncoding)
+                    peripheral.writeValue(data!, forCharacteristic: newPeriphChar.char!, type: CBCharacteristicWriteType.WithoutResponse)
+                }
+            }
+        }
+    }
+    
+    func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+        print(error)
+    }
+    
+    func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+        print("didDisconnectPeripheral")
+    }
+    func centralManagerDidUpdateState(central: CBCentralManager) {
+        switch (central.state) {
+        case .PoweredOff:
+            print("CoreBluetooth BLE hardware is powered off")
+            
+        case .PoweredOn:
+            print("CoreBluetooth BLE hardware is powered on and ready")
+            
+        case .Resetting:
+            print("CoreBluetooth BLE hardware is resetting")
+            
+        case .Unauthorized:
+            print("CoreBluetooth BLE state is unauthorized")
+            
+        case .Unknown:
+            print("CoreBluetooth BLE state is unknown")
+            
+        case .Unsupported:
+            print("CoreBluetooth BLE hardware is unsupported on this platform")
+        }
+    }
+}
+func currentTimeMillis() -> Int64{
+    let nowDouble = NSDate().timeIntervalSince1970
+    return Int64(nowDouble*1000)
 }
