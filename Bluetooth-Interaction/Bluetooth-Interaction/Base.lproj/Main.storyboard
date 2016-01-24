@@ -19,6 +19,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="RSx-vF-XfF"/>
+                    <connections>
+                        <segue destination="bk3-jP-ZUg" kind="show" identifier="InfoSegue" id="PfZ-Ti-vZb"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -40,7 +43,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pGY-dn-zs5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1904" y="389"/>
+            <point key="canvasLocation" x="1951" y="389"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="82A-GZ-jE1">

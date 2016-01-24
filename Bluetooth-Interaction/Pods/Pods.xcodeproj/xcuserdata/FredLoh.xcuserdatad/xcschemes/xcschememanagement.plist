@@ -4,12 +4,12 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Charts.xcscheme</key>
+		<key>ChameleonFramework.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>CryptoSwift.xcscheme</key>
+		<key>Charts.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -27,22 +27,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>16CF2309BA171385EED5E2A3A84A6E27</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>24090FBCEF7A50AE384678B5C071804B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>952FE1EB61CA49FEC151B1763B93E741</key>
+		<key>5172ACAB7FEA22813859DC97CA0AA16F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>AB69146C8DA5403BBF303DF6AE1DD7CB</key>
+		<key>6684BF9112D61B9D26B66472899661E8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D7650DE7E34555EC1BFA8C671742FE53</key>
 		<dict>
 			<key>primary</key>
 			<true/>

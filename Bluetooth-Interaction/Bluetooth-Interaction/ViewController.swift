@@ -19,6 +19,7 @@ func delay(delay:Double, closure:()->()) {
 import UIKit
 import CoreBluetooth
 import SnapKit
+import ChameleonFramework
 
 
 struct bothConnected {
@@ -30,7 +31,9 @@ struct bothConnected {
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, UITableViewDelegate, UITableViewDataSource {
     let backgroundView = UIView()
     let topBar = UIView()
-    
+    let connectButton = UIButton()
+    let disconnectButton = UIButton()
+    var hasChangedView = false
     let tableView = UITableView()
     var bothAreConnected = bothConnected()
     var periphArray = [CBPeripheral]()
@@ -85,6 +88,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func nextView() {
+        periphCharArray.removeAll()
+        usefulPeriphArray.removeAll()
+        arrayOfConsoles.removeAll()
+        arrayOfButtons.removeAll()
         for connections in connectionArray {
             if connections == true {
                 for(var i = 0; i < connectionArray.count; i++) {
@@ -96,23 +103,44 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 }
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 let controller = storyboard.instantiateViewControllerWithIdentifier("InfoSendingView") as! InfoSendingView
-                controller.periphArray = self.usefulPeriphArray
-                self.presentViewController(controller, animated: true, completion: nil)
                 
-                bothAreConnected.firstOne = true
+                controller.periphArray = self.usefulPeriphArray
+                hasChangedView = true
+                self.performSegueWithIdentifier("InfoSegue", sender: self)
+                //                self.presentViewController(controller, animated: true, completion: nil)
                 break
             }
         }
     }
     
+    func disconnect() {
+        for periph in usefulPeriphArray {
+            supercentralManager.cancelPeripheralConnection(periph)
+        }
+        
+        for (var i=0;i<connectionArray.count;i++) {
+            connectionArray[i] = false
+        }
+        tableView.reloadData()
+        periphCharArray.removeAll()
+        usefulPeriphArray.removeAll()
+        arrayOfConsoles.removeAll()
+        arrayOfButtons.removeAll()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        navigationItem.title = "Connections"
+    }
+    
     override func viewDidLoad() {
-        navigationController?.navigationBar.hidden = true
-        navigationItem.title = "Peripheral List"
+        navigationController?.navigationBar.hidden = false
+        navigationItem.title = "Connections"
         
         nextButton.setBackgroundImage(UIImage(named: "next"), forState: UIControlState.Normal)
         optionsButton.setBackgroundImage(UIImage(named: "Cog"), forState: UIControlState.Normal)
         
-        nextButton.addTarget(self, action: "nextView", forControlEvents: UIControlEvents.TouchUpInside)
+        connectButton.addTarget(self, action: "nextView", forControlEvents: UIControlEvents.TouchUpInside)
+        disconnectButton.addTarget(self, action: "disconnect", forControlEvents: UIControlEvents.TouchUpInside)
         optionsButton.addTarget(self, action: "openOptionsMenu", forControlEvents: UIControlEvents.TouchUpInside)
         topBar.addSubview(nextButton)
         topBar.addSubview(optionsButton)
@@ -137,6 +165,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         self.view.addGestureRecognizer(tap)
         self.view.addSubview(backgroundView)
+        self.view.addSubview(connectButton)
+        self.view.addSubview(disconnectButton)
         backgroundView.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
@@ -144,23 +174,42 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         
         
         backgroundView.snp_makeConstraints { (make) -> Void in
-            make.top.left.right.bottom.equalTo(self.view)
+            make.top.left.right.equalTo(self.view)
+            make.bottom.equalTo(connectButton.snp_top)
             make.centerX.equalTo(self.view)
+        }
+        disconnectButton.snp_makeConstraints { (make) -> Void in
+            make.left.bottom.right.equalTo(self.view)
+            make.height.equalTo(75)
+        }
+        connectButton.snp_makeConstraints { (make) -> Void in
+            make.left.right.equalTo(self.view)
+            make.bottom.equalTo(disconnectButton.snp_top)
+            make.height.equalTo(75)
         }
         tableView.snp_makeConstraints { (make) -> Void in
             make.left.bottom.right.equalTo(backgroundView)
             make.top.equalTo(topBar.snp_bottom)
         }
         
-        
-    }
-    func startScanning() {
-        print("Started Scanning!")
-        bothAreConnected.firstOne = false
-        bothAreConnected.secondOne = false
-        bothAreConnected.thirdOne = false
-        //Could add service UUID here to scan for only relevant services
-        supercentralManager = CBCentralManager(delegate: self, queue: nil)
+        connectButton.backgroundColor = FlatGreenDark()
+        let connectLabel = UILabel()
+        connectButton.addSubview(connectLabel)
+        connectLabel.text = "Connect"
+        connectLabel.font = UIFont.boldSystemFontOfSize(30)
+        connectLabel.textColor = UIColor(contrastingBlackOrWhiteColorOn:FlatGreenDark(), isFlat:true)
+        connectLabel.snp_makeConstraints { (make) -> Void in
+            make.center.equalTo(connectButton)
+        }
+        disconnectButton.backgroundColor = FlatRedDark()
+        let disconnectLabel = UILabel()
+        disconnectButton.addSubview(disconnectLabel)
+        disconnectLabel.text = "Disconnect"
+        disconnectLabel.font = UIFont.boldSystemFontOfSize(30)
+        disconnectLabel.textColor = UIColor(contrastingBlackOrWhiteColorOn:FlatRedDark(), isFlat:true)
+        disconnectLabel.snp_makeConstraints { (make) -> Void in
+            make.center.equalTo(disconnectButton)
+        }
     }
     
     func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
@@ -168,7 +217,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func discoverDevices() {
-        print("Searching for devices")
+        //        print("Searching for devices")
         supercentralManager.scanForPeripheralsWithServices(nil, options: nil)
     }
     
@@ -208,10 +257,15 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
-        if isUnique(peripheral) == true && peripheral.name != nil {
+        if isUnique(peripheral) == true && peripheral.name != nil && hasChangedView == false {
             periphArray.append(peripheral)
-            connectionArray.append(false)
+            var test = false
+            connectionArray.append(test)
             tableView.reloadData()
+        } else if peripheral.name != nil {
+            for periph in usefulPeriphArray {
+                supercentralManager.connectPeripheral(periph, options: nil)
+            }
         }
     }
     
@@ -226,6 +280,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             peripheral.discoverServices([CBUUID(string: serviceUUIDString2)])
             let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
             print("Connected: \(state)")
+            infoSendButton.backgroundColor = FlatForestGreen()
+            infoSendButton.enabled = true
         }
     }
     
@@ -235,9 +291,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
         for service in peripheral.services! {
             if peripheral.name == "RFduino" {
-                print("Service \(service)\n")
-                print("Discovering Characteristics for Service : \(service.UUID)")
-                print(service.characteristics)
+                //                print("Service \(service)\n")
+                //                print("Discovering Characteristics for Service : \(service.UUID)")
+                //                print(service.characteristics)
                 peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString)], forService: service as CBService)
             } else if peripheral.name == "Simblee" {
                 print("Service \(service)\n")
@@ -260,8 +316,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                     periphCharArray.append(newPeriphChar)
                     peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
                     
-                    print("Found characteristic we were looking for!")
-                    print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
+                    //                    print("Found characteristic we were looking for!")
+                    //                    print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
                 }
             } else if peripheral.name == "Simblee" {
                 if characteristic.UUID == CBUUID(string: characteristicUUIDString2) {
@@ -282,8 +338,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-        print("didDisconnectPeripheral")
-        startScanning()
+        print("\(peripheral.name) was disconnected.")
+        infoSendButton.backgroundColor = FlatRedDark()
+        infoSendButton.enabled = false
     }
     
     func openOptionsMenu() {
@@ -305,6 +362,14 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             }
         }
         alert.addAction(sendAction)
+        //        self.navigationController?.pushViewController(InfoSendingView(), animated: true)
         self.presentViewController(alert, animated: true, completion: nil)
+    }
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        navigationItem.title = ""
+        if (segue.identifier == "InfoSegue") {
+            let svc = segue.destinationViewController as! InfoSendingView
+            svc.periphArray = self.usefulPeriphArray
+        }
     }
 }

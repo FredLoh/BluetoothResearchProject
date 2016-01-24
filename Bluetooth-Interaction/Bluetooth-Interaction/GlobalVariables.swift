@@ -9,10 +9,10 @@
 import Foundation
 import UIKit
 import CoreBluetooth
+import ChameleonFramework
 
-
-var lightRed = UIColor.redColor().colorWithAlphaComponent(0.30)
-var lightGreen = UIColor.greenColor().colorWithAlphaComponent(0.30)
+var lightRed = FlatRed()
+var lightGreen = FlatGreen()
 
 var arrayOfCharacteristics = [CBCharacteristic]()
 
@@ -22,5 +22,8 @@ struct periphChar {
     var periph: CBPeripheral?
     var char: CBCharacteristic?
 }
-
+var disconnected = false
 var periphCharArray = [periphChar]()
+var arrayOfConsoles = [individualConsole]()
+var arrayOfButtons = [button]()
+var infoSendButton = UIButton()
