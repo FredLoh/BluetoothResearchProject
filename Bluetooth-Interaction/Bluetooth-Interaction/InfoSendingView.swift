@@ -16,6 +16,7 @@ struct button {
     var selected: Bool?
     var character: String?
     var button: UIButton?
+    var sent = false
 }
 struct individualConsole {
     var periph: CBPeripheral?
@@ -357,40 +358,40 @@ class InfoSendingView: UIViewController {
             arrayOfButtons.removeAll()
             for index in 1...12 {
                 if index == 1 {
-                    let newButton = button(selected: false, character: "a", button: button1)
+                    let newButton = button(selected: false, character: "a", button: button1, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 2 {
-                    let newButton = button(selected: false, character: "b", button: button2)
+                    let newButton = button(selected: false, character: "b", button: button2, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 3 {
-                    let newButton = button(selected: false, character: "c", button: button3)
+                    let newButton = button(selected: false, character: "c", button: button3, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 4 {
-                    let newButton = button(selected: false, character: "d", button: button4)
+                    let newButton = button(selected: false, character: "d", button: button4, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 5 {
-                    let newButton = button(selected: false, character: "e", button: button5)
+                    let newButton = button(selected: false, character: "e", button: button5, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 6 {
-                    let newButton = button(selected: false, character: "f", button: button6)
+                    let newButton = button(selected: false, character: "f", button: button6, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 7 {
-                    let newButton = button(selected: false, character: "g", button: button7)
+                    let newButton = button(selected: false, character: "g", button: button7, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 8 {
-                    let newButton = button(selected: false, character: "h", button: button8)
+                    let newButton = button(selected: false, character: "h", button: button8, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 9 {
-                    let newButton = button(selected: false, character: "i", button: button9)
+                    let newButton = button(selected: false, character: "i", button: button9, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 10 {
-                    let newButton = button(selected: false, character: "j", button: button10)
+                    let newButton = button(selected: false, character: "j", button: button10, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 11 {
-                    let newButton = button(selected: false, character: "k", button: button11)
+                    let newButton = button(selected: false, character: "k", button: button11, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 12 {
-                    let newButton = button(selected: false, character: "l", button: button12)
+                    let newButton = button(selected: false, character: "l", button: button12, sent: false)
                     arrayOfButtons.append(newButton)
                 }
             }
@@ -402,14 +403,10 @@ class InfoSendingView: UIViewController {
     }
     
     func sendCharacters() {
-        //        print("BEGIN")
         for console in arrayOfConsoles {
-            //            print(arrayOfConsoles.count)
             for button in console.arrayOfButtons {
                 if button.selected == true {
-                    //                    print("Button")
                     for periphChar in periphCharArray {
-                        //                        print(periphCharArray.count)
                         if periphChar.periph == console.periph {
                             let charString = button.character
                             print(charString)
