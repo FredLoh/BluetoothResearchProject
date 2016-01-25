@@ -1,26 +1,18 @@
 PODS:
+  - ChameleonFramework/Default (2.0.6)
+  - ChameleonFramework/Swift (2.0.6):
+    - ChameleonFramework/Default
   - Charts (2.1.6)
-  - CryptoSwift (0.1.1)
   - SnapKit (0.15.0)
 
 DEPENDENCIES:
+  - ChameleonFramework/Swift
   - Charts
-  - CryptoSwift (from `https://github.com/krzyzanowskim/CryptoSwift`, branch `master`)
-  - SnapKit (~> 0.15.0)
-
-EXTERNAL SOURCES:
-  CryptoSwift:
-    :branch: master
-    :git: https://github.com/krzyzanowskim/CryptoSwift
-
-CHECKOUT OPTIONS:
-  CryptoSwift:
-    :commit: f23720f6b398169d7407ca8b2c4a590238128686
-    :git: https://github.com/krzyzanowskim/CryptoSwift
+  - SnapKit
 
 SPEC CHECKSUMS:
+  ChameleonFramework: a6b466873ff9a4ce3a5196c20bccf1a97ad9f446
   Charts: 5e1e5ac23898e5b09d226a2fc3e9d86bc281937e
-  CryptoSwift: 80b014431f6ef249acb6004efc93a8f65f5f7781
   SnapKit: 4962eed2ee18e48cbd2b2292fffc57efe7235f87
 
 COCOAPODS: 0.39.0
