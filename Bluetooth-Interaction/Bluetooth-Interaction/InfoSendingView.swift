@@ -405,6 +405,8 @@ class InfoSendingView: UIViewController {
     
     func sendCharacters() {
         print("BUTTON WAS SELECTED")
+        print(periphArray)
+
         for index in 0..<periphArray.count {
             for index2 in 0..<arrayOfConsoles[index].arrayOfButtons.count {
                 if arrayOfConsoles[index].arrayOfButtons[index2].selected == true {
