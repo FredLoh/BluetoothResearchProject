@@ -73,6 +73,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         tableView.reloadData()
     }
     var counter = 0
+    var counterDisconnectHaveConnected = 0
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if let name = periphArray[indexPath.row].name {
@@ -117,6 +118,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func disconnect() {
+        infoSendButton.removeTarget(self, action: "sendCharacters", forControlEvents: UIControlEvents.TouchUpInside)
         for periph in usefulPeriphArray {
             supercentralManager.cancelPeripheralConnection(periph)
         }
@@ -136,9 +138,74 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         navigationItem.title = "Connections"
     }
     
+    func changeCharsToSend() {
+        let alert = UIAlertController(title: "Options", message:
+            "Change the values to be sent", preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default,handler: nil))
+        
+
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[0]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[1]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[2]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[3]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[4]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[5]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[6]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[7]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[8]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[9]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[10]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[11]
+        })
+        
+        let sendAction = UIAlertAction(title: "Ok", style: .Default) { (action) in
+            var didFillFields = true
+            for(var i=0;i<alert.textFields?.count;i++) {
+                if alert.textFields![i].text == "" {
+                    didFillFields = false
+                }
+            }
+            if didFillFields == true {
+                arrayOfCharactersToBeSent.removeAll()
+                for(var i=0;i<alert.textFields?.count;i++) {
+                    arrayOfCharactersToBeSent.append(alert.textFields![i].text!)
+                }
+                print(arrayOfCharactersToBeSent)
+            }
+        }
+        alert.addAction(sendAction)
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         navigationController?.navigationBar.hidden = false
         navigationItem.title = "Connections"
+        let b = UIBarButtonItem(title: "Options", style: .Plain, target: self, action:"changeCharsToSend")
+
+        self.navigationItem.setRightBarButtonItems([b], animated: true)
         
         nextButton.setBackgroundImage(UIImage(named: "next"), forState: UIControlState.Normal)
         optionsButton.setBackgroundImage(UIImage(named: "Cog"), forState: UIControlState.Normal)
@@ -277,6 +344,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
         //        print("Did connect to peripheral.", separator: "")
         //        print(peripheral)
+        //        disconnectHelperArray = connectionArray
+        //        for (var i=0;i < disconnectHelperArray.count; i++ ) {
+        //            disconnectHelperArray[i] = false
+        //        }
         if peripheral.name == "RFduino" {
             peripheral.discoverServices([CBUUID(string: serviceUUIDString)])
             let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
@@ -285,8 +356,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             peripheral.discoverServices([CBUUID(string: serviceUUIDString2)])
             let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
             //            print("Connected: \(state)")
-            infoSendButton.backgroundColor = FlatForestGreen()
-            infoSendButton.enabled = true
+            //            infoSendButton.backgroundColor = FlatForestGreen()
+            //            infoSendButton.enabled = true
         }
     }
     
@@ -331,8 +402,18 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                     periphCharArray.append(newPeriphChar)
                     peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
                     
+                    
+                    
                     print("Found characteristic we were looking for!")
-                    //                    print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
+                    //                    disconnectHelperArray[counterDisconnectHaveConnected] = true
+                    //                    counterDisconnectHaveConnected++
+                    //                    for disc in disconnectHelperArray {
+                    //                        if disc == false {
+                    //                            return
+                    //                        }
+                    //                    }
+                    infoSendButton.backgroundColor = FlatForestGreen()
+                    infoSendButton.enabled = true
                 }
             }
         }
@@ -348,6 +429,11 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         infoSendButton.enabled = false
         usefulPeriphArray.removeAll()
         periphCharArray.removeAll()
+        //        counterDisconnectHaveConnected = 0
+        //        disconnectHelperArray = connectionArray
+        //        for (var i=0;i < disconnectHelperArray.count; i++ ) {
+        //            disconnectHelperArray[i] = false
+        //        }
         for(var i = 0; i < connectionArray.count; i++) {
             if connectionArray[i].boolValue == true {
                 periphArray[i].delegate = self
@@ -355,7 +441,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 usefulPeriphArray.append(periphArray[i])
             }
         }
-        infoSendButton.enabled = true
+        
         
     }
     

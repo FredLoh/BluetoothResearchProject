@@ -187,7 +187,6 @@ class InfoSendingView: UIViewController {
         }
     }
     override func viewDidLoad() {
-        
         self.navigationController?.navigationBar.hidden = false
         self.navigationController?.navigationBar.backgroundColor = FlatBlack()
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
@@ -247,18 +246,18 @@ class InfoSendingView: UIViewController {
         rightButton.addTarget(self, action: "upOnePeriph", forControlEvents: UIControlEvents.TouchUpInside)
         leftButton.addTarget(self, action: "downOnePeriph", forControlEvents: UIControlEvents.TouchUpInside)
         
-        generateMessageButton(button1, label: "5 Hz", namelabel: "LED 1")
-        generateMessageButton(button2, label: "10 Hz", namelabel: "LED 1")
-        generateMessageButton(button3, label: "20 Hz", namelabel: "LED 1")
-        generateMessageButton(button4, label: "40 Hz", namelabel: "LED 1")
-        generateMessageButton(button5, label: "5 Hz", namelabel: "LED 2")
-        generateMessageButton(button6, label: "10 Hz", namelabel: "LED 2")
-        generateMessageButton(button7, label: "20 Hz", namelabel: "LED 2")
-        generateMessageButton(button8, label: "40 Hz", namelabel: "LED 2")
-        generateMessageButton(button9, label: "5 Hz", namelabel: "LED 3")
-        generateMessageButton(button10, label: "10 Hz", namelabel: "LED 3")
-        generateMessageButton(button11, label: "20 Hz", namelabel: "LED 3")
-        generateMessageButton(button12, label: "40 Hz", namelabel: "LED 3")
+        generateMessageButton(button1, label: "5 Hz", namelabel: arrayOfCharactersToBeSent[0])
+        generateMessageButton(button2, label: "10 Hz", namelabel: arrayOfCharactersToBeSent[1])
+        generateMessageButton(button3, label: "20 Hz", namelabel: arrayOfCharactersToBeSent[2])
+        generateMessageButton(button4, label: "40 Hz", namelabel: arrayOfCharactersToBeSent[3])
+        generateMessageButton(button5, label: "5 Hz", namelabel: arrayOfCharactersToBeSent[4])
+        generateMessageButton(button6, label: "10 Hz", namelabel: arrayOfCharactersToBeSent[5])
+        generateMessageButton(button7, label: "20 Hz", namelabel: arrayOfCharactersToBeSent[6])
+        generateMessageButton(button8, label: "40 Hz", namelabel: arrayOfCharactersToBeSent[7])
+        generateMessageButton(button9, label: "5 Hz", namelabel: arrayOfCharactersToBeSent[8])
+        generateMessageButton(button10, label: "10 Hz", namelabel: arrayOfCharactersToBeSent[9])
+        generateMessageButton(button11, label: "20 Hz", namelabel: arrayOfCharactersToBeSent[10])
+        generateMessageButton(button12, label: "40 Hz", namelabel: arrayOfCharactersToBeSent[11])
         
         scrollView.addSubview(button1)
         scrollView.addSubview(button2)
@@ -352,74 +351,85 @@ class InfoSendingView: UIViewController {
         button10.addTarget(self, action: "button10Clicked", forControlEvents: UIControlEvents.TouchUpInside)
         button11.addTarget(self, action: "button11Clicked", forControlEvents: UIControlEvents.TouchUpInside)
         button12.addTarget(self, action: "button12Clicked", forControlEvents: UIControlEvents.TouchUpInside)
-        infoSendButton.addTarget(self, action: "sendCharacters", forControlEvents: UIControlEvents.TouchUpInside)
         arrayOfConsoles.removeAll()
         for periph in periphArray {
             arrayOfButtons.removeAll()
             for index in 1...12 {
                 if index == 1 {
-                    let newButton = button(selected: false, character: "a", button: button1, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[0], button: button1, sent: false)
                     arrayOfButtons.append(newButton)
-                } else if index == 2 {
-                    let newButton = button(selected: false, character: "b", button: button2, sent: false)
+                }  else if index == 2 {
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[1], button: button2, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 3 {
-                    let newButton = button(selected: false, character: "c", button: button3, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[2], button: button3, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 4 {
-                    let newButton = button(selected: false, character: "d", button: button4, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[3], button: button4, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 5 {
-                    let newButton = button(selected: false, character: "e", button: button5, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[4], button: button5, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 6 {
-                    let newButton = button(selected: false, character: "f", button: button6, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[5], button: button6, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 7 {
-                    let newButton = button(selected: false, character: "g", button: button7, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[6], button: button7, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 8 {
-                    let newButton = button(selected: false, character: "h", button: button8, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[7], button: button8, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 9 {
-                    let newButton = button(selected: false, character: "i", button: button9, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[8], button: button9, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 10 {
-                    let newButton = button(selected: false, character: "j", button: button10, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[9], button: button10, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 11 {
-                    let newButton = button(selected: false, character: "k", button: button11, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[10], button: button11, sent: false)
                     arrayOfButtons.append(newButton)
                 } else if index == 12 {
-                    let newButton = button(selected: false, character: "l", button: button12, sent: false)
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[11], button: button12, sent: false)
                     arrayOfButtons.append(newButton)
                 }
             }
             let newConsole = individualConsole(periph: periph, arrayOfButtons: arrayOfButtons)
             arrayOfConsoles.append(newConsole)
         }
-        //        print("PERIPH ARRAY")
-        //        print(periphArray)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        infoSendButton.removeTarget(self, action: "sendCharacters", forControlEvents: UIControlEvents.TouchUpInside)
+        infoSendButton.addTarget(self, action: "sendCharacters", forControlEvents: UIControlEvents.TouchUpInside)
     }
     
     func sendCharacters() {
-        for console in arrayOfConsoles {
-            for button in console.arrayOfButtons {
-                if button.selected == true {
+        print("BUTTON WAS SELECTED")
+        for index in 0..<periphArray.count {
+            for index2 in 0..<arrayOfConsoles[index].arrayOfButtons.count {
+                if arrayOfConsoles[index].arrayOfButtons[index2].selected == true {
                     for periphChar in periphCharArray {
-                        if periphChar.periph == console.periph {
-                            let charString = button.character
-                            print(charString)
-                            let data = charString!.dataUsingEncoding(NSUTF8StringEncoding)
-                            //                            print(currentTimeMillis())
-                            periphChar.periph!.writeValue(data!, forCharacteristic: periphChar.char!, type: CBCharacteristicWriteType.WithResponse)
-                            //                            print(currentTimeMillis())
+                        if periphChar.periph == arrayOfConsoles[index].periph {
+                            if arrayOfConsoles[index].arrayOfButtons[index2].sent == false {
+                                let charString = arrayOfConsoles[index].arrayOfButtons[index2].character
+                                print(charString)
+                                let data = charString!.dataUsingEncoding(NSUTF8StringEncoding)
+                                //                            print(currentTimeMillis())
+                                periphChar.periph!.writeValue(data!, forCharacteristic: periphChar.char!, type: CBCharacteristicWriteType.WithResponse)
+                                //                            print(currentTimeMillis())
+                                arrayOfConsoles[index].arrayOfButtons[index2].sent = true
+                            }
                         }
                     }
                 }
             }
         }
         print("__________________________")
+        for index in 0..<arrayOfConsoles.count {
+            for index2 in 0..<arrayOfConsoles[index].arrayOfButtons.count {
+                arrayOfConsoles[index].arrayOfButtons[index2].sent = false
+            }
+        }
     }
     
 }

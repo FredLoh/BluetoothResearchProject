@@ -27,3 +27,5 @@ var periphCharArray = [periphChar]()
 var arrayOfConsoles = [individualConsole]()
 var arrayOfButtons = [button]()
 var infoSendButton = UIButton()
+
+var arrayOfCharactersToBeSent = ["a","b","c","d","e","f","g","h","i","j","k","l"]
