@@ -41,6 +41,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     var connectionArray = [Bool]()
     let nextButton = UIButton()
     let optionsButton = UIButton()
+    let newImage = UIImageView()
     
     var serviceUUIDString = "2220"
     var serviceUUIDString2 = "FE84"
@@ -143,7 +144,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             "Change the values to be sent", preferredStyle: UIAlertControllerStyle.Alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default,handler: nil))
         
-
+        
         alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
             textField.text = arrayOfCharactersToBeSent[0]
         })
@@ -204,13 +205,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         navigationController?.navigationBar.hidden = false
         navigationItem.title = "Connections"
         let b = UIBarButtonItem(title: "Options", style: .Plain, target: self, action:"changeCharsToSend")
-
+        
         self.navigationItem.setRightBarButtonItems([b], animated: true)
         
         nextButton.setBackgroundImage(UIImage(named: "next"), forState: UIControlState.Normal)
         optionsButton.setBackgroundImage(UIImage(named: "Cog"), forState: UIControlState.Normal)
         
         connectButton.addTarget(self, action: "nextView", forControlEvents: UIControlEvents.TouchUpInside)
+        connectButton.addSubview(newImage)
+        newImage.image = UIImage(named: "Cog")
+        newImage.snp_makeConstraints { (make) in
+            make.width.height.equalTo(30)
+            make.left.top.equalTo(connectButton)
+        }
+        
         disconnectButton.addTarget(self, action: "disconnect", forControlEvents: UIControlEvents.TouchUpInside)
         optionsButton.addTarget(self, action: "openOptionsMenu", forControlEvents: UIControlEvents.TouchUpInside)
         topBar.addSubview(nextButton)
@@ -328,7 +336,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
-        if isUnique(peripheral) == true && peripheral.name != nil && hasChangedView == false {
+        print(peripheral)
+        if isUnique(peripheral) == true && hasChangedView == false {
             periphArray.append(peripheral)
             var test = false
             connectionArray.append(test)
