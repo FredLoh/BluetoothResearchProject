@@ -1,0 +1,6 @@
+framework module Pods_Bluetooth_InteractionUITests {
+  umbrella header "Pods-Bluetooth-InteractionUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

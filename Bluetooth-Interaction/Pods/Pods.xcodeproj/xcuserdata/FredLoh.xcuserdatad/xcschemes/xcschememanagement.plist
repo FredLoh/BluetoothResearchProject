@@ -19,6 +19,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-Bluetooth-InteractionTests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Bluetooth-InteractionUITests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>SnapKit.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -27,6 +37,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>16BBAC38FFABF23F8C82CC519F8658A3</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>24090FBCEF7A50AE384678B5C071804B</key>
 		<dict>
 			<key>primary</key>
@@ -37,12 +52,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>6684BF9112D61B9D26B66472899661E8</key>
+		<key>7228102DD368C011A458141F58809B9C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D7650DE7E34555EC1BFA8C671742FE53</key>
+		<key>B4635138C41416FC9BC86764C4A2D3C5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D8BF533012E5B39305E734BDB6AE13B8</key>
 		<dict>
 			<key>primary</key>
 			<true/>

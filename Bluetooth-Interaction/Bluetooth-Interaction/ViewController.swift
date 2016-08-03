@@ -42,6 +42,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     let nextButton = UIButton()
     let optionsButton = UIButton()
     let newImage = UIImageView()
+    var chipName = "Mouse 1"
     
     var serviceUUIDString = "2220"
     var serviceUUIDString2 = "FE84"
@@ -182,18 +183,31 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             textField.text = arrayOfCharactersToBeSent[11]
         })
         
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = self.chipName
+        })
+        
         let sendAction = UIAlertAction(title: "Ok", style: .Default) { (action) in
             var didFillFields = true
-            for(var i=0;i<alert.textFields?.count;i++) {
+            for(var i=0;i<alert.textFields?.count;i += 1) {
                 if alert.textFields![i].text == "" {
                     didFillFields = false
+                }
+                if i == 12 {
+                    self.chipName = alert.textFields![i].text!
                 }
             }
             if didFillFields == true {
                 arrayOfCharactersToBeSent.removeAll()
-                for(var i=0;i<alert.textFields?.count;i++) {
+                for(var i=0;i<(alert.textFields?.count)! - 1;i++) {
                     arrayOfCharactersToBeSent.append(alert.textFields![i].text!)
+                    
+                    
+                    if i == 12 {
+                        self.chipName = alert.textFields![i].text!
+                    }
                 }
+                
                 print(arrayOfCharactersToBeSent)
             }
         }
@@ -337,7 +351,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         print(peripheral)
-        if isUnique(peripheral) == true && hasChangedView == false {
+        if isUnique(peripheral) == true && peripheral.name != nil && hasChangedView == false {
             periphArray.append(peripheral)
             var test = false
             connectionArray.append(test)
@@ -351,23 +365,23 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
-        //        print("Did connect to peripheral.", separator: "")
-        //        print(peripheral)
+        print("Did connect to peripheral.", separator: "")
+        print(peripheral)
         //        disconnectHelperArray = connectionArray
         //        for (var i=0;i < disconnectHelperArray.count; i++ ) {
         //            disconnectHelperArray[i] = false
         //        }
-        if peripheral.name == "RFduino" {
-            peripheral.discoverServices([CBUUID(string: serviceUUIDString)])
-            let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
-            //            print("Connected: \(state)")
-        } else if peripheral.name == "Simblee" {
-            peripheral.discoverServices([CBUUID(string: serviceUUIDString2)])
-            let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
-            //            print("Connected: \(state)")
-            //            infoSendButton.backgroundColor = FlatForestGreen()
-            //            infoSendButton.enabled = true
-        }
+        //        if peripheral.name == "RFduino" {
+        //        peripheral.discoverServices([CBUUID(string: serviceUUIDString)])
+        //            let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
+        //            print("Connected: \(state)")
+        //        } else if peripheral.name == self.chipName {
+        peripheral.discoverServices([CBUUID(string: serviceUUIDString2)])
+        let state = peripheral.state == CBPeripheralState.Connected ? "yes" : "no"
+        //            print("Connected: \(state)")
+        //            infoSendButton.backgroundColor = FlatForestGreen()
+        //            infoSendButton.enabled = true
+        //        }
     }
     
     func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
@@ -375,17 +389,17 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             print(error?.description)
         }
         for service in peripheral.services! {
-            if peripheral.name == "RFduino" {
-                //                print("Service \(service)\n")
-                //                print("Discovering Characteristics for Service : \(service.UUID)")
-                //                print(service.characteristics)
-                peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString)], forService: service as CBService)
-            } else if peripheral.name == "Simblee" {
-                //                print("Service \(service)\n")
-                //                print("Discovering Characteristics for Service : \(service.UUID)")
-                //                print(service.characteristics)
-                peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString2)], forService: service as CBService)
-            }
+            //            if peripheral.name == "RFduino" {
+            //                print("Service \(service)\n")
+            //                print("Discovering Characteristics for Service : \(service.UUID)")
+            //                print(service.characteristics)
+            //                peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString)], forService: service as CBService)
+            //            } else if peripheral.name == self.chipName {
+            print("Service \(service)\n")
+            print("Discovering Characteristics for Service : \(service.UUID)")
+            print(service.characteristics)
+            peripheral.discoverCharacteristics([CBUUID(string: characteristicUUIDString2)], forService: service as CBService)
+            //            }
         }
     }
     
@@ -394,36 +408,36 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             print(error?.description)
         }
         for characteristic in service.characteristics! {
-            if peripheral.name == "RFduino" {
-                if characteristic.UUID == CBUUID(string: characteristicUUIDString) {
-                    
-                    let newPeriphChar = periphChar(periph: peripheral, char: characteristic)
-                    periphCharArray.append(newPeriphChar)
-                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
-                    
-                    //                    print("Found characteristic we were looking for!")
-                    //                    print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
-                }
-            } else if peripheral.name == "Simblee" {
-                if characteristic.UUID == CBUUID(string: characteristicUUIDString2) {
-                    
-                    let newPeriphChar = periphChar(periph: peripheral, char: characteristic)
-                    periphCharArray.append(newPeriphChar)
-                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
-                    
-                    
-                    
-                    print("Found characteristic we were looking for!")
-                    //                    disconnectHelperArray[counterDisconnectHaveConnected] = true
-                    //                    counterDisconnectHaveConnected++
-                    //                    for disc in disconnectHelperArray {
-                    //                        if disc == false {
-                    //                            return
-                    //                        }
-                    //                    }
-                    infoSendButton.backgroundColor = FlatForestGreen()
-                    infoSendButton.enabled = true
-                }
+            //            if peripheral.name == "RFduino" {
+            //                if characteristic.UUID == CBUUID(string: characteristicUUIDString) {
+            
+            //                    let newPeriphChar = periphChar(periph: peripheral, char: characteristic)
+            //                    periphCharArray.append(newPeriphChar)
+            //                    peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+            
+            //                    print("Found characteristic we were looking for!")
+            //                    print(peripheral.readValueForCharacteristic(characteristic as CBCharacteristic))
+            //                }
+            //            } else if peripheral.name == self.chipName {
+            if characteristic.UUID == CBUUID(string: characteristicUUIDString2) {
+                
+                let newPeriphChar = periphChar(periph: peripheral, char: characteristic)
+                periphCharArray.append(newPeriphChar)
+                peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+                
+                
+                
+                print("Found characteristic we were looking for!")
+                //                    disconnectHelperArray[counterDisconnectHaveConnected] = true
+                //                    counterDisconnectHaveConnected++
+                //                    for disc in disconnectHelperArray {
+                //                        if disc == false {
+                //                            return
+                //                        }
+                //                    }
+                infoSendButton.backgroundColor = FlatForestGreen()
+                infoSendButton.enabled = true
+                //                }
             }
         }
     }
