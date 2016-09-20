@@ -46,6 +46,15 @@ class InfoSendingView: UIViewController {
     var button10 = UIButton()
     var button11 = UIButton()
     var button12 = UIButton()
+    var button13 = UIButton()
+    var button14 = UIButton()
+    var button15 = UIButton()
+    var button16 = UIButton()
+    var button17 = UIButton()
+    var button18 = UIButton()
+    var button19 = UIButton()
+    var button20 = UIButton()
+    var button21 = UIButton()
     
     func upOnePeriph() {
         leftButton.hidden = false
@@ -186,6 +195,88 @@ class InfoSendingView: UIViewController {
             arrayOfConsoles[activePeripheral-1].arrayOfButtons[11].selected = false
         }
     }
+    func button13Clicked() {
+        if arrayOfConsoles[activePeripheral-1].arrayOfButtons[12].selected == false {
+            button13.backgroundColor = lightGreen
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[12].selected = true
+        } else {
+            button13.backgroundColor = lightRed
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[12].selected = false
+        }
+    }
+    func button14Clicked() {
+        if arrayOfConsoles[activePeripheral-1].arrayOfButtons[13].selected == false {
+            button14.backgroundColor = lightGreen
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[13].selected = true
+        } else {
+            button14.backgroundColor = lightRed
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[13].selected = false
+        }
+    }
+    func button15Clicked() {
+        if arrayOfConsoles[activePeripheral-1].arrayOfButtons[14].selected == false {
+            button15.backgroundColor = lightGreen
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[14].selected = true
+        } else {
+            button15.backgroundColor = lightRed
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[14].selected = false
+        }
+    }
+    func button16Clicked() {
+        if arrayOfConsoles[activePeripheral-1].arrayOfButtons[15].selected == false {
+            button16.backgroundColor = lightGreen
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[15].selected = true
+        } else {
+            button16.backgroundColor = lightRed
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[15].selected = false
+        }
+    }
+    func button17Clicked() {
+        if arrayOfConsoles[activePeripheral-1].arrayOfButtons[16].selected == false {
+            button17.backgroundColor = lightGreen
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[16].selected = true
+        } else {
+            button17.backgroundColor = lightRed
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[16].selected = false
+        }
+    }
+    func button18Clicked() {
+        if arrayOfConsoles[activePeripheral-1].arrayOfButtons[17].selected == false {
+            button18.backgroundColor = lightGreen
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[17].selected = true
+        } else {
+            button18.backgroundColor = lightRed
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[17].selected = false
+        }
+    }
+    func button19Clicked() {
+        if arrayOfConsoles[activePeripheral-1].arrayOfButtons[18].selected == false {
+            button19.backgroundColor = lightGreen
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[18].selected = true
+        } else {
+            button19.backgroundColor = lightRed
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[18].selected = false
+        }
+    }
+    func button20Clicked() {
+        if arrayOfConsoles[activePeripheral-1].arrayOfButtons[19].selected == false {
+            button20.backgroundColor = lightGreen
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[19].selected = true
+        } else {
+            button20.backgroundColor = lightRed
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[19].selected = false
+        }
+    }
+    func button21Clicked() {
+        if arrayOfConsoles[activePeripheral-1].arrayOfButtons[20].selected == false {
+            button21.backgroundColor = lightGreen
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[20].selected = true
+        } else {
+            button21.backgroundColor = lightRed
+            arrayOfConsoles[activePeripheral-1].arrayOfButtons[20].selected = false
+        }
+    }
+    
     override func viewDidLoad() {
         self.navigationController?.navigationBar.hidden = false
         self.navigationController?.navigationBar.backgroundColor = FlatBlack()
@@ -258,6 +349,15 @@ class InfoSendingView: UIViewController {
         generateMessageButton(button10, label: "10 Hz", namelabel: arrayOfCharactersToBeSent[9])
         generateMessageButton(button11, label: "20 Hz", namelabel: arrayOfCharactersToBeSent[10])
         generateMessageButton(button12, label: "40 Hz", namelabel: arrayOfCharactersToBeSent[11])
+        generateMessageButton(button13, label: "Heater 1", namelabel: arrayOfCharactersToBeSent[12])
+        generateMessageButton(button14, label: "Heater 2", namelabel: arrayOfCharactersToBeSent[13])
+        generateMessageButton(button15, label: "Heater 3", namelabel: arrayOfCharactersToBeSent[14])
+        generateMessageButton(button16, label: "Heater 4", namelabel: arrayOfCharactersToBeSent[15])
+        generateMessageButton(button17, label: "LEDS Off", namelabel: arrayOfCharactersToBeSent[16])
+        generateMessageButton(button18, label: "Reset", namelabel: arrayOfCharactersToBeSent[17])
+        generateMessageButton(button19, label: "Sleep", namelabel: arrayOfCharactersToBeSent[18])
+        generateMessageButton(button20, label: "Wake Up", namelabel: arrayOfCharactersToBeSent[19])
+        
         
         scrollView.addSubview(button1)
         scrollView.addSubview(button2)
@@ -271,6 +371,16 @@ class InfoSendingView: UIViewController {
         scrollView.addSubview(button10)
         scrollView.addSubview(button11)
         scrollView.addSubview(button12)
+        scrollView.addSubview(button13)
+        scrollView.addSubview(button14)
+        scrollView.addSubview(button15)
+        scrollView.addSubview(button16)
+        scrollView.addSubview(button17)
+        scrollView.addSubview(button18)
+        scrollView.addSubview(button19)
+        scrollView.addSubview(button20)
+        scrollView.addSubview(button21)
+        
         let heightWidth = 80
         button1.snp_makeConstraints { (make) -> Void in
             make.right.equalTo(button5.snp_left).offset(-10)
@@ -333,8 +443,64 @@ class InfoSendingView: UIViewController {
             make.width.height.equalTo(heightWidth)
         }
         
+        //LED OFF
+        button17.snp_makeConstraints { (make) in
+            make.left.equalTo(button1)
+            make.right.equalTo(button9)
+            make.top.equalTo(button4.snp_bottom).offset(10)
+            make.height.equalTo(80)
+        }
+        
+        //Heaters 13-16
+        button13.snp_makeConstraints { (make) in
+            make.top.equalTo(button17.snp_bottom).offset(10)
+            make.left.equalTo(button17)
+            make.right.equalTo(button17.snp_centerX).offset(-5)
+            make.height.equalTo(80)
+        }
+        button14.snp_makeConstraints { (make) in
+            make.top.equalTo(button17.snp_bottom).offset(10)
+            make.right.equalTo(button17)
+            make.left.equalTo(button17.snp_centerX).offset(5)
+            make.height.equalTo(80)
+        }
+        button15.snp_makeConstraints { (make) in
+            make.top.equalTo(button13.snp_bottom).offset(10)
+            make.left.equalTo(button17)
+            make.right.equalTo(button17.snp_centerX).offset(-5)
+            make.height.equalTo(80)
+        }
+        button16.snp_makeConstraints { (make) in
+            make.top.equalTo(button13.snp_bottom).offset(10)
+            make.right.equalTo(button17)
+            make.left.equalTo(button17.snp_centerX).offset(5)
+            make.height.equalTo(80)
+        }
+        
+        //Commands
+        button18.snp_makeConstraints { (make) in
+            make.top.equalTo(button16.snp_bottom).offset(10)
+            make.right.equalTo(button17)
+            make.left.equalTo(button17.snp_centerX).offset(5)
+            make.height.equalTo(80)
+        }
+        button19.snp_makeConstraints { (make) in
+            make.top.equalTo(button16.snp_bottom).offset(10)
+            make.left.equalTo(button17)
+            make.right.equalTo(button17.snp_centerX).offset(-5)
+            make.height.equalTo(80)
+        }
+        button20.snp_makeConstraints { (make) in
+            make.top.equalTo(button18.snp_bottom).offset(10)
+            make.right.equalTo(button17)
+            make.left.equalTo(button17.snp_centerX).offset(5)
+            make.height.equalTo(80)
+        }
+        
+        
+        
         scrollView.snp_updateConstraints { (make) -> Void in
-            make.bottom.equalTo(button4.snp_bottom).offset(60)
+            make.bottom.equalTo(button20.snp_bottom).offset(60)
             //            make.left.equalTo(button1).offset(-60)
             //            make.right.equalTo(button12.snp_right).offset(10)
         }
@@ -351,10 +517,19 @@ class InfoSendingView: UIViewController {
         button10.addTarget(self, action: "button10Clicked", forControlEvents: UIControlEvents.TouchUpInside)
         button11.addTarget(self, action: "button11Clicked", forControlEvents: UIControlEvents.TouchUpInside)
         button12.addTarget(self, action: "button12Clicked", forControlEvents: UIControlEvents.TouchUpInside)
+        button13.addTarget(self, action: "button13Clicked", forControlEvents: UIControlEvents.TouchUpInside)
+        button14.addTarget(self, action: "button14Clicked", forControlEvents: UIControlEvents.TouchUpInside)
+        button15.addTarget(self, action: "button15Clicked", forControlEvents: UIControlEvents.TouchUpInside)
+        button16.addTarget(self, action: "button16Clicked", forControlEvents: UIControlEvents.TouchUpInside)
+        button17.addTarget(self, action: "button17Clicked", forControlEvents: UIControlEvents.TouchUpInside)
+        button18.addTarget(self, action: "button18Clicked", forControlEvents: UIControlEvents.TouchUpInside)
+        button19.addTarget(self, action: "button19Clicked", forControlEvents: UIControlEvents.TouchUpInside)
+        button20.addTarget(self, action: "button20Clicked", forControlEvents: UIControlEvents.TouchUpInside)
+        
         arrayOfConsoles.removeAll()
         for periph in periphArray {
             arrayOfButtons.removeAll()
-            for index in 1...12 {
+            for index in 1...20 {
                 if index == 1 {
                     let newButton = button(selected: false, character: arrayOfCharactersToBeSent[0], button: button1, sent: false)
                     arrayOfButtons.append(newButton)
@@ -391,6 +566,30 @@ class InfoSendingView: UIViewController {
                 } else if index == 12 {
                     let newButton = button(selected: false, character: arrayOfCharactersToBeSent[11], button: button12, sent: false)
                     arrayOfButtons.append(newButton)
+                } else if index == 13 {
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[12], button: button13, sent: false)
+                    arrayOfButtons.append(newButton)
+                } else if index == 14 {
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[13], button: button14, sent: false)
+                    arrayOfButtons.append(newButton)
+                } else if index == 15 {
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[14], button: button15, sent: false)
+                    arrayOfButtons.append(newButton)
+                } else if index == 16 {
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[15], button: button16, sent: false)
+                    arrayOfButtons.append(newButton)
+                } else if index == 17 {
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[16], button: button17, sent: false)
+                    arrayOfButtons.append(newButton)
+                } else if index == 18 {
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[17], button: button18, sent: false)
+                    arrayOfButtons.append(newButton)
+                } else if index == 19 {
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[18], button: button19, sent: false)
+                    arrayOfButtons.append(newButton)
+                } else if index == 20 {
+                    let newButton = button(selected: false, character: arrayOfCharactersToBeSent[19], button: button12, sent: false)
+                    arrayOfButtons.append(newButton)
                 }
             }
             let newConsole = individualConsole(periph: periph, arrayOfButtons: arrayOfButtons)
@@ -406,7 +605,7 @@ class InfoSendingView: UIViewController {
     func sendCharacters() {
         print("BUTTON WAS SELECTED")
         print(periphArray)
-
+        
         for index in 0..<periphArray.count {
             for index2 in 0..<arrayOfConsoles[index].arrayOfButtons.count {
                 if arrayOfConsoles[index].arrayOfButtons[index2].selected == true {

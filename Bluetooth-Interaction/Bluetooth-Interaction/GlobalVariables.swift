@@ -28,4 +28,4 @@ var arrayOfConsoles = [individualConsole]()
 var arrayOfButtons = [button]()
 var infoSendButton = UIButton()
 
-var arrayOfCharactersToBeSent = ["a","b","c","d","e","f","g","h","i","j","k","l"]
+var arrayOfCharactersToBeSent = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t"]

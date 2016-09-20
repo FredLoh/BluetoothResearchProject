@@ -182,6 +182,30 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
             textField.text = arrayOfCharactersToBeSent[11]
         })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[12]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[13]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[14]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[15]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[16]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[17]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[18]
+        })
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.text = arrayOfCharactersToBeSent[19]
+        })
         
         alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
             textField.text = self.chipName
@@ -193,7 +217,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 if alert.textFields![i].text == "" {
                     didFillFields = false
                 }
-                if i == 12 {
+                if i == 20 {
                     self.chipName = alert.textFields![i].text!
                 }
             }
@@ -202,8 +226,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 for(var i=0;i<(alert.textFields?.count)! - 1;i++) {
                     arrayOfCharactersToBeSent.append(alert.textFields![i].text!)
                     
-                    
-                    if i == 12 {
+                    if i == 21 {
                         self.chipName = alert.textFields![i].text!
                     }
                 }
@@ -226,12 +249,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         optionsButton.setBackgroundImage(UIImage(named: "Cog"), forState: UIControlState.Normal)
         
         connectButton.addTarget(self, action: "nextView", forControlEvents: UIControlEvents.TouchUpInside)
-        connectButton.addSubview(newImage)
-        newImage.image = UIImage(named: "Cog")
-        newImage.snp_makeConstraints { (make) in
-            make.width.height.equalTo(30)
-            make.left.top.equalTo(connectButton)
-        }
         
         disconnectButton.addTarget(self, action: "disconnect", forControlEvents: UIControlEvents.TouchUpInside)
         optionsButton.addTarget(self, action: "openOptionsMenu", forControlEvents: UIControlEvents.TouchUpInside)
